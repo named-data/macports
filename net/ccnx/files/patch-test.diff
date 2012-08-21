@@ -1,0 +1,218 @@
+diff --git Makefile Makefile
+index 2748ac8..34b67af 100644
+--- Makefile
++++ Makefile
+@@ -13,7 +13,7 @@
+ #
+ 
+ # Subdirectories we build in
+-TOPSUBDIRS = doc/manpages doc/technical csrc schema javasrc apps `cat local.subdirs 2>/dev/null || :`
++TOPSUBDIRS = doc/manpages doc/technical csrc schema `cat local.subdirs 2>/dev/null || :`
+ # Packing list for packaging
+ PACKLIST = Makefile README LICENSE NEWS NOTICES configure doc/index.txt $(TOPSUBDIRS) android experiments
+ BLDMSG = printf '=== %s ' 'Building $@ in' && pwd
+diff --git csrc/configure csrc/configure
+index 962d76a..43ec3ea 100755
+--- csrc/configure
++++ csrc/configure
+@@ -39,7 +39,7 @@ TryAppend "`uname -sr | sed -e 's/ /-/g'`"
+ TryAppend "local"
+ TryScript "`uname`" "$@"
+ TryScript "local" "$@"
+-ProvideDefault CPREFLAGS = -I../include
++ProvideDefault CPREFLAGS = -I../include ${CFLAGS:-}
+ ProvideDefault PCAP_PROGRAMS = ccndumppcap
+ ProvideDefault RESOLV_LIBS = -lresolv
+ ProvideDefault INSTALL_BASE = ${INSTALL_BASE:-/usr/local}
+diff --git csrc/lib/ccn_client.c csrc/lib/ccn_client.c
+index 606fd36..9b3760c 100644
+--- csrc/lib/ccn_client.c
++++ csrc/lib/ccn_client.c
+@@ -2435,6 +2435,7 @@ ccn_load_private_key(struct ccn *h,
+         res = NOTE_ERRNO(h);
+         goto Cleanup;
+     }
++    fprintf (stderr, ">>> load_private_key: [%s]\n", keystore_path);
+     res = ccn_keystore_init(keystore,
+                            (char *)keystore_path,
+                            (char *)keystore_passphrase);
+@@ -2487,6 +2488,7 @@ ccn_load_default_key(struct ccn *h,
+     if (h->default_pubid != NULL)
+         return(NOTE_ERR(h, EINVAL));
+     default_pubid = ccn_charbuf_create();
++    printf ("Tring to open keystore [%s]\n", keystore_path);
+     res = ccn_load_private_key(h,
+                                keystore_path,
+                                keystore_passphrase,
+@@ -2607,23 +2609,58 @@ ccn_chk_signing_params(struct ccn *h,
+             temp = ccn_charbuf_create();
+             if (default_pubid == NULL || temp == NULL)
+                 return(NOTE_ERRNO(h));
+-            ccnx_dir = getenv("CCNX_DIR");
+-            if (ccnx_dir == NULL || ccnx_dir[0] == 0) {
+-                home = getenv("HOME");
+-                if (home == NULL)
+-                    home = "";
+-                ccn_charbuf_putf(temp, "%s/.ccnx/.ccnx_keystore", home);
++
++            res = -1;
++#ifdef CCNX_DIR
++            if (res < 0 || default_pubid->length != sizeof(result->pubid)) {
++              // check preconfigured directory
++              ccnx_dir = CCNX_DIR;
++              if (ccnx_dir != NULL && ccnx_dir[0] != 0) {
++                ccn_charbuf_reset(temp);
++                ccn_charbuf_putf(temp, "%s/.ccnx_keystore", ccnx_dir);
++
++                res = ccn_load_private_key(h,
++                                           ccn_charbuf_as_string(temp),
++                                           "Th1s1sn0t8g00dp8ssw0rd.",
++                                           default_pubid);
++              }
+             }
+-            else
++#endif
++            
++            if (res < 0 || default_pubid->length != sizeof(result->pubid)) {
++              // check CCNX_DIR
++              ccnx_dir = getenv("CCNX_DIR");
++              if (ccnx_dir != NULL && ccnx_dir[0] != 0) {
++                ccn_charbuf_reset(temp);
+                 ccn_charbuf_putf(temp, "%s/.ccnx_keystore", ccnx_dir);
+-            res = ccn_load_private_key(h,
+-                                       ccn_charbuf_as_string(temp),
+-                                       "Th1s1sn0t8g00dp8ssw0rd.",
+-                                       default_pubid);
++
++                res = ccn_load_private_key(h,
++                                           ccn_charbuf_as_string(temp),
++                                           "Th1s1sn0t8g00dp8ssw0rd.",
++                                           default_pubid);
++              }
++            }
++            
++            if (res < 0 || default_pubid->length != sizeof(result->pubid)) {
++              // check HOME
++              home = getenv("HOME");
++              if (home != NULL) {
++                ccn_charbuf_reset(temp);
++                ccn_charbuf_putf(temp, "%s/.ccnx/.ccnx_keystore", home);
++                res = ccn_load_private_key(h,
++                                           ccn_charbuf_as_string(temp),
++                                           "Th1s1sn0t8g00dp8ssw0rd.",
++                                           default_pubid);
++              }
++            }
++            
+             if (res == 0 && default_pubid->length == sizeof(result->pubid)) {
+                 h->default_pubid = default_pubid;
+                 default_pubid = NULL;
+             }
++            else {
++              ccn_perror(h, ccn_charbuf_as_string(temp));
++            }
+         }
+         if (h->default_pubid == NULL)
+             res = NOTE_ERRNO(h);
+diff --git csrc/lib/ccn_initkeystore.sh csrc/lib/ccn_initkeystore.sh
+index 12bc9e3..a171a0e 100755
+--- csrc/lib/ccn_initkeystore.sh
++++ csrc/lib/ccn_initkeystore.sh
+@@ -15,6 +15,7 @@
+ # Create a ccn keystore without relying on java
+ : ${RSA_KEYSIZE:=1024}
+ : ${CCN_USER:=`id -n -u`}
++: ${CCNX_HOME:=.ccnx}
+ Fail () {
+   echo '*** Failed' "$*"
+   exit 1
+@@ -37,6 +38,7 @@ countryName_default		= AU
+ countryName_min			= 2
+ countryName_max			= 2
+ EOF
++RANDFILE=.rnd
+ openssl req    -config openssl.cnf      \
+                -newkey rsa:$RSA_KEYSIZE \
+                -x509                    \
+diff --git csrc/lib/ccn_keystore.c csrc/lib/ccn_keystore.c
+index ac936c3..c103dd8 100644
+--- csrc/lib/ccn_keystore.c
++++ csrc/lib/ccn_keystore.c
+@@ -76,6 +76,8 @@ ccn_keystore_init(struct ccn_keystore *p, char *filename, char *password)
+     int digest_size;
+     int res;
+ 
++    fprintf (stderr, "Trying to open [%s]\n\n", filename);
++    
+     OpenSSL_add_all_algorithms();
+     fp = fopen(filename, "rb");
+     if (fp == NULL)
+diff --git csrc/lib/dir.mk csrc/lib/dir.mk
+index 6489299..145eec7 100644
+--- csrc/lib/dir.mk
++++ csrc/lib/dir.mk
+@@ -78,7 +78,7 @@ shlib: $(SHLIBNAME)
+ lib: libccn.a
+ 
+ test: default keystore_check encodedecodetest ccnbtreetest
+-	./encodedecodetest -o /dev/null
++	./encodedecodetest -k $(CCNX_DIR)/.ccnx_keystore -o /dev/null
+ 	./ccnbtreetest
+ 	./ccnbtreetest - < q.dat
+ 	rm -R _bt_*
+@@ -87,12 +87,12 @@ dtag_check: _always
+ 	@./gen_dtag_table 2>/dev/null | diff - ccn_dtag_table.c | grep '^[<]' >/dev/null && echo '*** Warning: ccn_dtag_table.c may be out of sync with tagnames.cvsdict' || :
+ 
+ keystore_check: ccn_initkeystore.sh
+-	test -f "$$HOME/.ccnx/.ccnx_keystore" || $(MAKE) -f dir.mk new_keystore
++	test -f "$(CCNX_DIR)/.ccnx_keystore" || $(MAKE) -f dir.mk new_keystore
+ 
+ new_keystore:
+ 	@echo === CCNx Keystore not found in your home directory
+ 	@echo === I will create one for you now '(^C to abort)'
+-	sleep 1 && sh ccn_initkeystore.sh && sleep 3 && mv .ccnx "$$HOME"
++	sleep 1 && sh ccn_initkeystore.sh && sleep 3 && mkdir -p "$(CCNX_DIR)/" && mv .ccnx/.ccnx_keystore "$(CCNX_DIR)/"
+ 
+ libccn.a: $(LIB_OBJS)
+ 	ar crus $@ $(LIB_OBJS)
+@@ -113,7 +113,7 @@ skel_decode_test: skel_decode_test.o
+ basicparsetest: basicparsetest.o libccn.a
+ 	$(CC) $(CFLAGS) -o $@ basicparsetest.o $(LDLIBS) $(OPENSSL_LIBS) -lcrypto
+ 
+-encodedecodetest: encodedecodetest.o
++encodedecodetest: encodedecodetest.o libccn.a
+ 	$(CC) $(CFLAGS) -o $@ encodedecodetest.o $(LDLIBS) $(OPENSSL_LIBS) -lcrypto
+ 
+ ccn_digest.o:
+@@ -149,16 +149,16 @@ ccn_fetch.o:
+ ccn_verifysig.o:
+ 	$(CC) $(CFLAGS) $(OPENSSL_CFLAGS) -c ccn_verifysig.c
+ 
+-ccn_verifysig: ccn_verifysig.o
++ccn_verifysig: ccn_verifysig.o libccn.a
+ 	$(CC) $(CFLAGS) -o $@ ccn_verifysig.o $(LDLIBS) $(OPENSSL_LIBS) -lcrypto
+ 
+ signbenchtest.o:
+ 	$(CC) $(CFLAGS) $(OPENSSL_CFLAGS) -c signbenchtest.c
+ 
+-signbenchtest: signbenchtest.o
++signbenchtest: signbenchtest.o libccn.a
+ 	$(CC) $(CFLAGS) -o $@ signbenchtest.o $(LDLIBS) $(OPENSSL_LIBS) -lcrypto 
+ 
+-ccndumppcap: ccndumppcap.o
++ccndumppcap: ccndumppcap.o libccn.a
+ 	$(CC) $(CFLAGS) -o $@ ccndumppcap.o $(LDLIBS) $(OPENSSL_LIBS) -lcrypto -lpcap
+ 
+ ccnbtreetest.o:
+diff --git csrc/lib/encodedecodetest.c csrc/lib/encodedecodetest.c
+index be6a853..21b288b 100644
+--- csrc/lib/encodedecodetest.c
++++ csrc/lib/encodedecodetest.c
+@@ -241,6 +241,7 @@ main (int argc, char *argv[]) {
+         strcat(keystore_name, keystore_suffix);
+     }
+ 
++    printf ("\nWTF %s\n\n", keystore_name);
+     if (0 != ccn_keystore_init(keystore, keystore_name, "Th1s1sn0t8g00dp8ssw0rd.")) {
+         printf("Failed to initialize keystore\n");
+         exit(1);

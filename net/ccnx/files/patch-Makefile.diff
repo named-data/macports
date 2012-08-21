@@ -1,0 +1,13 @@
+diff --git Makefile Makefile
+index 2748ac8..34b67af 100644
+--- Makefile
++++ Makefile
+@@ -13,7 +13,7 @@
+ #
+ 
+ # Subdirectories we build in
+-TOPSUBDIRS = doc/manpages doc/technical csrc schema javasrc apps `cat local.subdirs 2>/dev/null || :`
++TOPSUBDIRS = doc/manpages doc/technical csrc schema `cat local.subdirs 2>/dev/null || :`
+ # Packing list for packaging
+ PACKLIST = Makefile README LICENSE NEWS NOTICES configure doc/index.txt $(TOPSUBDIRS) android experiments
+ BLDMSG = printf '=== %s ' 'Building $@ in' && pwd

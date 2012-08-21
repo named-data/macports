@@ -1,0 +1,12 @@
+diff --git csrc/lib/encodedecodetest.c csrc/lib/encodedecodetest.c
+index be6a853..21b288b 100644
+--- csrc/lib/encodedecodetest.c
++++ csrc/lib/encodedecodetest.c
+@@ -241,6 +241,7 @@ main (int argc, char *argv[]) {
+         strcat(keystore_name, keystore_suffix);
+     }
+ 
++    printf ("\nWTF %s\n\n", keystore_name);
+     if (0 != ccn_keystore_init(keystore, keystore_name, "Th1s1sn0t8g00dp8ssw0rd.")) {
+         printf("Failed to initialize keystore\n");
+         exit(1);

@@ -1,0 +1,88 @@
+# -*- coding: utf-8; mode: tcl; tab-width: 4; indent-tabs-mode: nil; c-basic-offset: 4 -*- vim:fenc=utf-8:ft=tcl:et:sw=4:ts=4:sts=4
+# $Id$
+
+PortSystem  1.0
+name        ccnx
+version     0.6.1rc1
+revision    1
+epoch       1
+categories  net
+platforms   darwin
+license     GPL LGPL
+maintainers ucla.edu:alexander.afanasyev
+description ProjectCCNx implementation of Content Centric Networking (CCN) / \
+            Named Data Networking (NDN) architecture
+long_description Project CCNx® exists to develop, promote, and evaluate a new \
+            approach to communication architecture we call content-centric \
+            networking.  We seek to carry out this mission by creating and \
+            publishing open protocol specifications and an open source \
+            software reference implementation of those protocols.  We provide \
+            support for a community of people interested in experimentation, \
+            research, and building applications with this technology, all \
+            contributing to its evolution. 
+homepage    http://www.ccnx.org/
+master_sites http://www.ccnx.org/releases/
+checksums   rmd160 9c8eb49aa8d2edfe5eb873312f6273ca469255a4 \
+            sha256 7ac8f2ac3b6bcda85e9b4df34c025f68d576d98dcadf16eea2ed1c3dcee4d557
+
+# use_parallel_build  yes
+
+depends_lib port:openssl \
+            port:expat \
+            port:libpcap \
+            port:libxml2
+
+# default_variants   +java
+
+configure.env-append OPENSSL_CFLAGS=-I${prefix}/include
+configure.env-append OPENSSL_LIBS=-L${prefix}/lib
+configure.env-append INSTALL_BASE=${prefix}
+configure.cflags-append -DCCNX_DIR=\\\"${prefix}/etc/ccnx\\\"
+
+pre-build {
+    reinplace "s|\$HOME/.ccnx/|${prefix}/etc/ccnx/|g" ${worksrcpath}/csrc/util/ccndstart.sh 
+}
+
+build.env-append OPENSSL_CFLAGS=-I${prefix}/include
+build.env-append OPENSSL_LIBS=-L${prefix}/lib
+build.env-append INSTALL_BASE=${destroot}${prefix}
+build.env-append CCNX_DIR=${destroot}${prefix}/etc/ccnx
+
+destroot.env-append INSTALL_BASE=${destroot}${prefix}
+destroot.env-append CCNX_DIR=${destroot}${prefix}/etc/ccnx
+
+patchfiles    patch-test.diff
+# patchfiles  patch-csrc-lib-dir.mk.diff \
+#             patch-Makefile.diff \
+#             patch-csrc-lib-ccn_client.c.diff \
+#             patch-csrc-configure.diff \
+#             patch-csrc-lib-encodedecodetest.c.diff
+
+startupitem.pidfile     none
+startupitem.start       "${prefix}/bin/ccndstart"
+startupitem.stop        "${prefix}/bin/ccndstop"
+startupitem.restart     "${prefix}/bin/ccndstop && ${prefix}/bin/ccndstart"
+
+startupitem.create      yes
+startupitem.name        ccnx
+
+startupitem.netchange   yes
+startupitem.logevents   yes
+startupitem.logfile     ${prefix}/var/log/ccnx.log
+
+notes "
+In order repo to work, you need to add the following lines at the end of your \[~/.bash_profile\]:
+
+  export CCNR_DIRECTORY=${prefix}/etc/ccnx/repo
+
+To configure environment variables for ccnd, edit your \[${prefix}/etc/ccnx/ccndrc\]. For example,
+  
+  CCND_LOG=${prefix}/var/log/ccnd.log
+  CCND_DEBUG=16
+
+To add static FIB entries, edit your \[${prefix}/etc/ccnx/ccnd.conf\]. For example,
+
+  add ccnx:/ccnx.org udp 224.0.23.170 59695
+
+For more information and documentation, refer to man pages and http://www.ccnx.org website.
+"
