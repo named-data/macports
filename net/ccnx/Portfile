@@ -37,7 +37,7 @@ depends_lib port:openssl \
 configure.env-append OPENSSL_CFLAGS=-I${prefix}/include
 configure.env-append OPENSSL_LIBS=-L${prefix}/lib
 configure.env-append INSTALL_BASE=${prefix}
-configure.cflags-append -DCCNX_DIR=\\\"${prefix}/etc/ccnx\\\"
+configure.cflags -DCCNX_DIR=\\\"${prefix}/etc/ccnx\\\" -O0 -g3
 
 pre-build {
     reinplace "s|\$HOME/.ccnx/|${prefix}/etc/ccnx/|g" ${worksrcpath}/csrc/util/ccndstart.sh 
