@@ -1,16 +1,3 @@
-diff --git Makefile Makefile
-index 2748ac8..34b67af 100644
---- Makefile
-+++ Makefile
-@@ -13,7 +13,7 @@
- #
- 
- # Subdirectories we build in
--TOPSUBDIRS = doc/manpages doc/technical csrc schema javasrc apps `cat local.subdirs 2>/dev/null || :`
-+TOPSUBDIRS = doc/manpages doc/technical csrc schema `cat local.subdirs 2>/dev/null || :`
- # Packing list for packaging
- PACKLIST = Makefile README LICENSE NEWS NOTICES configure doc/index.txt $(TOPSUBDIRS) android experiments
- BLDMSG = printf '=== %s ' 'Building $@ in' && pwd
 diff --git csrc/configure csrc/configure
 index 962d76a..43ec3ea 100755
 --- csrc/configure
@@ -25,26 +12,10 @@ index 962d76a..43ec3ea 100755
  ProvideDefault RESOLV_LIBS = -lresolv
  ProvideDefault INSTALL_BASE = ${INSTALL_BASE:-/usr/local}
 diff --git csrc/lib/ccn_client.c csrc/lib/ccn_client.c
-index 606fd36..9b3760c 100644
+index 606fd36..a3392fc 100644
 --- csrc/lib/ccn_client.c
 +++ csrc/lib/ccn_client.c
-@@ -2435,6 +2435,7 @@ ccn_load_private_key(struct ccn *h,
-         res = NOTE_ERRNO(h);
-         goto Cleanup;
-     }
-+    fprintf (stderr, ">>> load_private_key: [%s]\n", keystore_path);
-     res = ccn_keystore_init(keystore,
-                            (char *)keystore_path,
-                            (char *)keystore_passphrase);
-@@ -2487,6 +2488,7 @@ ccn_load_default_key(struct ccn *h,
-     if (h->default_pubid != NULL)
-         return(NOTE_ERR(h, EINVAL));
-     default_pubid = ccn_charbuf_create();
-+    printf ("Tring to open keystore [%s]\n", keystore_path);
-     res = ccn_load_private_key(h,
-                                keystore_path,
-                                keystore_passphrase,
-@@ -2607,23 +2609,58 @@ ccn_chk_signing_params(struct ccn *h,
+@@ -2607,23 +2607,58 @@ ccn_chk_signing_params(struct ccn *h,
              temp = ccn_charbuf_create();
              if (default_pubid == NULL || temp == NULL)
                  return(NOTE_ERRNO(h));
@@ -134,19 +105,6 @@ index 12bc9e3..a171a0e 100755
  openssl req    -config openssl.cnf      \
                 -newkey rsa:$RSA_KEYSIZE \
                 -x509                    \
-diff --git csrc/lib/ccn_keystore.c csrc/lib/ccn_keystore.c
-index ac936c3..c103dd8 100644
---- csrc/lib/ccn_keystore.c
-+++ csrc/lib/ccn_keystore.c
-@@ -76,6 +76,8 @@ ccn_keystore_init(struct ccn_keystore *p, char *filename, char *password)
-     int digest_size;
-     int res;
- 
-+    fprintf (stderr, "Trying to open [%s]\n\n", filename);
-+    
-     OpenSSL_add_all_algorithms();
-     fp = fopen(filename, "rb");
-     if (fp == NULL)
 diff --git csrc/lib/dir.mk csrc/lib/dir.mk
 index 6489299..145eec7 100644
 --- csrc/lib/dir.mk
@@ -204,15 +162,3 @@ index 6489299..145eec7 100644
  	$(CC) $(CFLAGS) -o $@ ccndumppcap.o $(LDLIBS) $(OPENSSL_LIBS) -lcrypto -lpcap
  
  ccnbtreetest.o:
-diff --git csrc/lib/encodedecodetest.c csrc/lib/encodedecodetest.c
-index be6a853..21b288b 100644
---- csrc/lib/encodedecodetest.c
-+++ csrc/lib/encodedecodetest.c
-@@ -241,6 +241,7 @@ main (int argc, char *argv[]) {
-         strcat(keystore_name, keystore_suffix);
-     }
- 
-+    printf ("\nWTF %s\n\n", keystore_name);
-     if (0 != ccn_keystore_init(keystore, keystore_name, "Th1s1sn0t8g00dp8ssw0rd.")) {
-         printf("Failed to initialize keystore\n");
-         exit(1);

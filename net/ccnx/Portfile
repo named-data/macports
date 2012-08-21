@@ -51,12 +51,7 @@ build.env-append CCNX_DIR=${destroot}${prefix}/etc/ccnx
 destroot.env-append INSTALL_BASE=${destroot}${prefix}
 destroot.env-append CCNX_DIR=${destroot}${prefix}/etc/ccnx
 
-patchfiles    patch-test.diff
-# patchfiles  patch-csrc-lib-dir.mk.diff \
-#             patch-Makefile.diff \
-#             patch-csrc-lib-ccn_client.c.diff \
-#             patch-csrc-configure.diff \
-#             patch-csrc-lib-encodedecodetest.c.diff
+patchfiles    patch-macports-customizations.diff
 
 startupitem.pidfile     none
 startupitem.start       "${prefix}/bin/ccndstart"
