@@ -56,7 +56,7 @@ patchfiles    patch-macports-customizations.diff
 startupitem.pidfile     none
 startupitem.start       "${prefix}/bin/ccndstart"
 startupitem.stop        "${prefix}/bin/ccndstop"
-startupitem.restart     "${prefix}/bin/ccndstop && ${prefix}/bin/ccndstart"
+startupitem.restart     "${prefix}/bin/ccndstop && sleep 3 && ${prefix}/bin/ccndstart"
 
 startupitem.create      yes
 startupitem.name        ccnx
