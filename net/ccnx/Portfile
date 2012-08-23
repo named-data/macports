@@ -3,7 +3,7 @@
 
 PortSystem  1.0
 name        ccnx
-version     0.6.1rc1
+version     0.6.1
 revision    1
 epoch       1
 categories  net
@@ -21,9 +21,14 @@ long_description Project CCNx® exists to develop, promote, and evaluate a new \
             research, and building applications with this technology, all \
             contributing to its evolution. 
 homepage    http://www.ccnx.org/
-master_sites http://www.ccnx.org/releases/
-checksums   rmd160 9c8eb49aa8d2edfe5eb873312f6273ca469255a4 \
-            sha256 7ac8f2ac3b6bcda85e9b4df34c025f68d576d98dcadf16eea2ed1c3dcee4d557
+
+fetch.type git
+git.url    https://github.com/ProjectCCNx/ccnx.git
+git.branch ccnx-0.6.1
+
+# master_sites http://www.ccnx.org/releases/
+# checksums   rmd160 9c8eb49aa8d2edfe5eb873312f6273ca469255a4 \
+#             sha256 7ac8f2ac3b6bcda85e9b4df34c025f68d576d98dcadf16eea2ed1c3dcee4d557
 
 # use_parallel_build  yes
 
@@ -37,7 +42,7 @@ depends_lib port:openssl \
 configure.env-append OPENSSL_CFLAGS=-I${prefix}/include
 configure.env-append OPENSSL_LIBS=-L${prefix}/lib
 configure.env-append INSTALL_BASE=${prefix}
-configure.cflags -DCCNX_DIR=\\\"${prefix}/etc/ccnx\\\" -g3 -O0
+configure.cflags -DCCNX_DIR=\\\"${prefix}/etc/ccnx\\\" 
 
 pre-build {
     reinplace "s|\$HOME/.ccnx/|${prefix}/etc/ccnx/|g" ${worksrcpath}/csrc/util/ccndstart.sh 
