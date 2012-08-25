@@ -1,0 +1,35 @@
+# -*- coding: utf-8; mode: tcl; tab-width: 4; indent-tabs-mode: nil; c-basic-offset: 4 -*- vim:fenc=utf-8:ft=tcl:et:sw=4:ts=4:sts=4
+# $Id$
+
+PortSystem          1.0
+
+use_configure       yes
+use_autoreconf      yes
+name                ndndump
+version             0.1
+revision            1
+description	        tcpdump for NDN
+long_description \
+	A simple tcpdump-like program that decodes and print out \
+    ccnb-formatted packets (see www.ccnx.org).
+maintainers         ucla.edu:alexander.afanasyev
+categories	        net
+platforms	        darwin
+homepage            https://github.com/cawka/ndndump
+
+fetch.type git
+git.url    https://github.com/cawka/ndndump.git
+git.branch master
+
+depends_build	\
+	port:autoconf \
+    port:libtool \
+	port:pkgconfig
+depends_lib-append	\
+    port:openssl \
+    port:ccnx \
+    port:boost \
+    port:libpcap
+
+configure.args-append --with-ccnx=${prefix}
+configure.args-append --with-boost=${prefix}

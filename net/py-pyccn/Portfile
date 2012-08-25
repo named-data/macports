@@ -1,12 +1,12 @@
 # -*- coding: utf-8; mode: tcl; tab-width: 4; indent-tabs-mode: nil; c-basic-offset: 4 -*- vim:fenc=utf-8:ft=tcl:et:sw=4:ts=4:sts=4
-# $Id: Portfile 78158 2011-04-26 13:15:48Z jmr@macports.org $
+# $Id$
 
 PortSystem          1.0
 PortGroup           python 1.0
 
 use_configure       yes
 use_autoreconf      yes
-name                py-ccn
+name                py-pyccn
 version             0.2
 python.versions     27
 python.default_version   27
@@ -37,14 +37,14 @@ depends_lib-append	\
 
 pre-configure {
     file mkdir "${worksrcpath}/build-aux"
-}
 
-configure.args-append --with-ccn=${prefix}
-configure.env-append OPENSSL_INCLUDES=-I${prefix}/include
-configure.env-append OPENSSL_LDFLAGS=-L${prefix}/lib
-configure.env-append OPENSSL_LIBS="-lssl -lcrypto"
-configure.env-append PYTHON_SITE_PKG=${python.pkgd}
-configure.env-append PYTHON=${python.bin}
+    configure.args-append --with-ccn=${prefix}
+    configure.env-append OPENSSL_INCLUDES=-I${prefix}/include
+    configure.env-append OPENSSL_LDFLAGS=-L${prefix}/lib
+    configure.env-append OPENSSL_LIBS="-lssl -lcrypto"
+    configure.env-append PYTHON_SITE_PKG=${python.pkgd}
+    configure.env-append PYTHON=${python.bin}
+}
 
 build.cmd           make
 build.target    
