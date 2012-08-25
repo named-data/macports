@@ -76,6 +76,8 @@ post-destroot {
 
     system "echo CCND_LOG=${prefix}/var/log/ccnd.log > ${destroot}${prefix}/etc/ccnx/ccndrc.sample"
     system "echo CCND_DEBUG=16 >> ${destroot}${prefix}/etc/ccnx/ccndrc.sample"
+
+    system "chown ${ccnxuser}:${ccnxgroup} ${destroot}${prefix}/etc/ccnx"
 }
 
 build.env-append OPENSSL_CFLAGS=-I${prefix}/include

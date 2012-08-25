@@ -1,0 +1,55 @@
+# -*- coding: utf-8; mode: tcl; tab-width: 4; indent-tabs-mode: nil; c-basic-offset: 4 -*- vim:fenc=utf-8:ft=tcl:et:sw=4:ts=4:sts=4
+# $Id$
+
+PortSystem  1.0
+name        ccnping
+version     0.1
+revision    1
+epoch       1
+categories  net
+platforms   darwin
+license     GPL LGPL
+maintainers ucla.edu:alexander.afanasyev
+description ping command equivalent for CCNx
+long_description ccnpingserver and ccnping are CCNx applications used for testing connectivity 
+homepage    https://github.com/NDN-Routing/ccnping
+
+use_configure false
+
+fetch.type git
+git.url    https://github.com/NDN-Routing/ccnping.git
+git.branch master
+
+use_parallel_build  no
+
+depends_lib port:ccnx
+
+# User should be already created by ccnx port
+set ccnxuser  ccnx
+set ccnxgroup ccnx
+set ccnxdir   ${prefix}/etc/ccnx
+
+build.env-append CFLAGS=-I${prefix}/include
+build.env-append LIBS=-L${prefix}/lib
+build.env-append INSTALL_BASE=${prefix}
+build.env-append CC=${configure.cc}
+
+destroot {
+    system "echo /ndn/`hostname` > ${ccnxdir}/ccnpingserver.conf.example"
+    xinstall -W ${worksrcpath} ccnping ccnpingserver ${destroot}${prefix}/bin/
+}
+
+patchfiles    patch-Makefile.diff
+
+# startupitem.executable       "su ${ccnxuser} -c \"${prefix}/bin/ccnpingserver `cat ${ccnxdir}/ccnpingserver.conf`\""
+# startupitem.create      yes
+# startupitem.name        ccnping
+
+notes "
+ccnpingserver is usually run on a hub.  For example, on Arizona hub, ccnpingserver 
+is started by running \[ccnpingserver /ndn/arizona.edu\]. Then we can run 
+\[ccnping /ndn/arizona.edu\] from other nodes to test connectivity towards name 
+prefix /ndn/arizona.edu.
+"
+
+# To run ccnpingserver, a name prefix should be configured in \[${ccnxdir}/ccnpingserver.conf\] file.

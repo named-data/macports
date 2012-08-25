@@ -1,0 +1,32 @@
+diff --git Makefile Makefile
+index bf720d4..e8a9b86 100644
+--- Makefile
++++ Makefile
+@@ -1,22 +1,21 @@
+-CC = cc
+-CFLAGS = -g -Wall -Wpointer-arith -Wreturn-type -Wstrict-prototypes
+-LIBS = -lccn -lcrypto
++EXTRA_CFLAGS = -g -Wall -Wpointer-arith -Wreturn-type -Wstrict-prototypes
++EXTRA_LIBS = -lccn -lcrypto
+ 
+ PROGRAMS = ccnping ccnpingserver
+ 
+ all: $(PROGRAMS)
+ 
+ ccnping: ccnping.o
+-	$(CC) $(CFLAGS) -o $@ ccnping.o $(LIBS)
++	$(CC) $(CFLAGS) $(EXTRA_CFLAGS) -o $@ ccnping.o $(LIBS) $(EXTRA_LIBS)
+ 
+ ccnpingserver: ccnpingserver.o
+-	$(CC) $(CFLAGS) -o $@ ccnpingserver.o $(LIBS)
++	$(CC) $(CFLAGS) $(EXTRA_CFLAGS) -o $@ ccnpingserver.o $(LIBS) $(EXTRA_LIBS)
+ 
+ clean:
+ 	rm -f *.o
+ 	rm -f $(PROGRAMS)
+ 
+ .c.o:
+-	$(CC) $(CFLAGS) -c $<
++	$(CC) $(CFLAGS) $(EXTRA_CFLAGS) -c $<
+ 
+ .PHONY: all clean
