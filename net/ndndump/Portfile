@@ -4,6 +4,10 @@
 PortSystem          1.0
 PortGroup           github 1.0
 
+github.setup        cawka ndndump 0.1
+checksums           rmd160  05320e661ff050a7dcb188299091f7321ac8e008 \
+                    sha256  f7b09b67b19f89026e92a86d642205d5f674cce54605ae100cc045bc0e4d9634
+
 name                ndndump
 homepage            https://github.com/cawka/ndndump
 license             GNU-3+
@@ -20,10 +24,6 @@ long_description    A simple tcpdump-like program that decodes and print out \
                     ccnb-formatted packets (see www.ccnx.org).
 
 use_autoreconf      yes
-
-github.setup        cawka ndndump v0.1
-checksums           rmd160  05320e661ff050a7dcb188299091f7321ac8e008 \
-                    sha256  f7b09b67b19f89026e92a86d642205d5f674cce54605ae100cc045bc0e4d9634
 
 depends_lib-append  port:ccnx \
                     port:boost \
