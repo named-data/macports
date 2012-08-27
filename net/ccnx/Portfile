@@ -32,7 +32,7 @@ checksums               rmd160 073478f3d5818b0e4fe09e21a727e5f3207e4277 \
                         
 use_parallel_build      yes
                         
-depends_lib             port:openssl \
+depends_lib-append      port:openssl \
                         port:expat \
                         port:libpcap \
                         port:libxml2

@@ -23,7 +23,7 @@ checksums           rmd160  8c7071eba0e93da07f71f0dda7b0a538a7cbd078 \
                     sha256  b7c9ce05a990b7ef8411e43fcc60cf861a8da1e9d55e0bcc1ef557103cf2f4a6
 
 use_configure       false
-depends_lib         port:ccnx
+depends_lib-append  port:ccnx
 
 # User should be already created by ccnx port
 set ccnxuser        ccnx
