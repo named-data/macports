@@ -1,49 +1,46 @@
 # -*- coding: utf-8; mode: tcl; tab-width: 4; indent-tabs-mode: nil; c-basic-offset: 4 -*- vim:fenc=utf-8:ft=tcl:et:sw=4:ts=4:sts=4
 # $Id$
 
-PortSystem  1.0
-name        ccnping
-version     0.1
-revision    1
-epoch       1
-categories  net
-platforms   darwin
-license     GPL LGPL
-maintainers ucla.edu:alexander.afanasyev
-description ping command equivalent for CCNx
-long_description ccnpingserver and ccnping are CCNx applications used for testing connectivity 
-homepage    https://github.com/NDN-Routing/ccnping
+PortSystem          1.0
+PortGroup           github 1.0
 
-use_configure false
+name                ccnping
+homepage            https://github.com/NDN-Routing/ccnping
+license             GPL-2+
+version             0.1
+revision            0
 
-fetch.type git
-git.url    https://github.com/NDN-Routing/ccnping.git
-git.branch master
+categories          net ccnx
+platforms           darwin
+maintainers         ucla.edu:alexander.afanasyev
 
-use_parallel_build  no
+description         ping command equivalent for CCNx
 
-depends_lib port:ccnx
+long_description    ccnpingserver and ccnping are CCNx applications used for testing connectivity 
+
+github.setup        NDN-Routing ccnping 071f07b409c62dc1cf0de4e2eb2d214ea76bb624
+checksums           rmd160  8c7071eba0e93da07f71f0dda7b0a538a7cbd078 \
+                    sha256  b7c9ce05a990b7ef8411e43fcc60cf861a8da1e9d55e0bcc1ef557103cf2f4a6
+
+use_configure       false
+depends_lib         port:ccnx
 
 # User should be already created by ccnx port
-set ccnxuser  ccnx
-set ccnxgroup ccnx
-set ccnxdir   ${prefix}/etc/ccnx
+set ccnxuser        ccnx
+set ccnxgroup       ccnx
+set ccnxdir         ${prefix}/etc/ccnx
 
-build.env-append CFLAGS=-I${prefix}/include
-build.env-append LIBS=-L${prefix}/lib
-build.env-append INSTALL_BASE=${prefix}
-build.env-append CC=${configure.cc}
+build.env-append    CFLAGS=-I${prefix}/include \
+                    LIBS=-L${prefix}/lib \
+                    INSTALL_BASE=${prefix} \
+                    CC=${configure.cc}
 
 destroot {
     system "echo /ndn/`hostname` > ${ccnxdir}/ccnpingserver.conf.example"
     xinstall -W ${worksrcpath} ccnping ccnpingserver ${destroot}${prefix}/bin/
 }
 
-patchfiles    patch-Makefile.diff
-
-# startupitem.executable       "su ${ccnxuser} -c \"${prefix}/bin/ccnpingserver `cat ${ccnxdir}/ccnpingserver.conf`\""
-# startupitem.create      yes
-# startupitem.name        ccnping
+patchfiles          patch-Makefile.diff
 
 notes "
 ccnpingserver is usually run on a hub.  For example, on Arizona hub, ccnpingserver 
@@ -51,5 +48,3 @@ is started by running \[ccnpingserver /ndn/arizona.edu\]. Then we can run
 \[ccnping /ndn/arizona.edu\] from other nodes to test connectivity towards name 
 prefix /ndn/arizona.edu.
 "
-
-# To run ccnpingserver, a name prefix should be configured in \[${ccnxdir}/ccnpingserver.conf\] file.

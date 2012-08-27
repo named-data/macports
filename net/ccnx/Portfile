@@ -1,90 +1,95 @@
 # -*- coding: utf-8; mode: tcl; tab-width: 4; indent-tabs-mode: nil; c-basic-offset: 4 -*- vim:fenc=utf-8:ft=tcl:et:sw=4:ts=4:sts=4
 # $Id$
 
-PortSystem  1.0
-name        ccnx
-version     0.6.1
-revision    2
-epoch       1
-categories  net
-platforms   darwin
-license     GPL LGPL
-maintainers ucla.edu:alexander.afanasyev
-description ProjectCCNx implementation of Content Centric Networking (CCN) / \
-            Named Data Networking (NDN) architecture
-long_description Project CCNx® exists to develop, promote, and evaluate a new \
-            approach to communication architecture we call content-centric \
-            networking.  We seek to carry out this mission by creating and \
-            publishing open protocol specifications and an open source \
-            software reference implementation of those protocols.  We provide \
-            support for a community of people interested in experimentation, \
-            research, and building applications with this technology, all \
-            contributing to its evolution. 
-homepage    http://www.ccnx.org/
+PortSystem              1.0
+                        
+name                    ccnx
+homepage                http://www.ccnx.org/
+license                 GPL-2+ LGPL-2.1+
+version                 0.6.1
+revision                0
+epoch                   0
 
-# fetch.type git
-# git.url    https://github.com/ProjectCCNx/ccnx.git
-# git.branch ccnx-0.6.1
-
-master_sites http://www.ccnx.org/releases/
-checksums   rmd160 073478f3d5818b0e4fe09e21a727e5f3207e4277 \
-            sha256 bfaae10c2c1a327d77f752737b60243e23fd8f3a7c7025ae92221ba0a700b889 
-
-use_parallel_build  yes
-
-depends_lib port:openssl \
-            port:expat \
-            port:libpcap \
-            port:libxml2
-
-set ccnxuser  ccnx
-set ccnxgroup ccnx
-set ccnxdir   ${prefix}/etc/ccnx
-
-add_users ${ccnxuser} shell=/bin/sh group=${ccnxgroup} \
-    home=${ccnxdir} \
-    realname=CCNx\ Account
-
-default_variants   +java +apps
+categories              net ccnx
+platforms               darwin
+maintainers             ucla.edu:alexander.afanasyev
+                        
+description             ProjectCCNx implementation of Content Centric Networking (CCN) / \
+                        Named Data Networking (NDN) architecture
+                        
+long_description        Project CCNx(r) exists to develop, promote, and evaluate a new \
+                        approach to communication architecture we call content-centric \
+                        networking.  We seek to carry out this mission by creating and \
+                        publishing open protocol specifications and an open source \
+                        software reference implementation of those protocols.  We provide \
+                        support for a community of people interested in experimentation, \
+                        research, and building applications with this technology, all \
+                        contributing to its evolution. 
+                        
+master_sites            http://www.ccnx.org/releases/
+checksums               rmd160 073478f3d5818b0e4fe09e21a727e5f3207e4277 \
+                        sha256 bfaae10c2c1a327d77f752737b60243e23fd8f3a7c7025ae92221ba0a700b889 
+                        
+use_parallel_build      yes
+                        
+depends_lib             port:openssl \
+                        port:expat \
+                        port:libpcap \
+                        port:libxml2
+                        
+set ccnxuser            ccnx
+set ccnxgroup           ccnx
+set ccnxdir             ${prefix}/etc/ccnx
+                        
+add_users               ${ccnxuser} shell=/bin/sh group=${ccnxgroup} \
+                        home=${ccnxdir} \
+                        realname=CCNx\ Account
+                        
+default_variants        +java +apps
 
 variant java description {Enable Java API build} {
-    configure.env-delete BUILD_JAVA=false
+    configure.env-delete   BUILD_JAVA=false
 }
 
 variant apps requires java description {Enable build of reference applications} {
-    configure.env-delete BUILD_APPS=false
+    configure.env-delete   BUILD_APPS=false
 }
 
-configure.env-append OPENSSL_CFLAGS=-I${prefix}/include
-configure.env-append OPENSSL_LIBS=-L${prefix}/lib
-configure.env-append INSTALL_BASE=${prefix}
-configure.env-append BUILD_JAVA=false
-configure.env-append BUILD_APPS=false
-configure.cflags -DCCNX_DIR=\\\"${prefix}/etc/ccnx\\\" 
+patchfiles              patch-macports-customizations.diff
 
-pre-build {
-    reinplace "s|\$HOME/.ccnx/|${prefix}/etc/ccnx/|g" ${worksrcpath}/csrc/util/ccndstart.sh 
+post-patch {
+    reinplace   "s|\$HOME/.ccnx/|${prefix}/etc/ccnx/|g" ${worksrcpath}/csrc/util/ccndstart.sh 
 }
+
+configure.env-append    OPENSSL_CFLAGS=-I${prefix}/include \
+                        OPENSSL_LIBS=-L${prefix}/lib \
+                        INSTALL_BASE=${prefix} \
+                        BUILD_JAVA=false \
+                        BUILD_APPS=false \
+
+configure.cflags-append -DCCNX_DIR=\\\"${prefix}/etc/ccnx\\\" 
+
+build.env-append        OPENSSL_CFLAGS=-I${prefix}/include \
+                        OPENSSL_LIBS=-L${prefix}/lib \
+                        INSTALL_BASE=${prefix}
 
 post-destroot {
-    system "mkdir -p ${destroot}${prefix}/var/log"
-    system "touch ${destroot}${prefix}/var/log/ccnd.log"
-    system "chown ${ccnxuser}:${ccnxgroup} ${destroot}${prefix}/var/log/ccnd.log"
+    # Create a configuration directory, which also a home directory for ${ccnxuser}
+    xinstall -d -o ${ccnxuser} -g ${ccnxgroup} "${destroot}${prefix}/etc/ccnx"
 
-    file mkdir ${destroot}${prefix}/etc/ccnx
-    file copy ${worksrcpath}/csrc/libexec/ccnd.conf.sample ${destroot}${prefix}/etc/ccnx/
+    # Copy a sample ccnd.conf file
+    xinstall -o ${ccnxuser} -g ${ccnxgroup} ${worksrcpath}/csrc/libexec/ccnd.conf.sample ${destroot}${prefix}/etc/ccnx/
 
-    system "echo CCND_LOG=${prefix}/var/log/ccnd.log > ${destroot}${prefix}/etc/ccnx/ccndrc.sample"
-    system "echo CCND_DEBUG=16 >> ${destroot}${prefix}/etc/ccnx/ccndrc.sample"
-
-    system "chown ${ccnxuser}:${ccnxgroup} ${destroot}${prefix}/etc/ccnx"
+    # Create a sample ccndrc file
+    system "echo CCND_LOG=${prefix}/var/log/ccnd.log > \"${destroot}${prefix}/etc/ccnx/ccndrc.sample\""
+    system "echo CCND_DEBUG=16 >> \"${destroot}${prefix}/etc/ccnx/ccndrc.sample\""
 }
 
-build.env-append OPENSSL_CFLAGS=-I${prefix}/include
-build.env-append OPENSSL_LIBS=-L${prefix}/lib
-build.env-append INSTALL_BASE=${prefix}
-
-patchfiles    patch-macports-customizations.diff
+post-activate {
+    # log file needs to be owned by ${ccnxuser}, otherwise ccnd will not be able to write to it
+    touch "${prefix}/var/log/ccnd.log"
+    file attributes "${prefix}/var/log/ccnd.log" -owner ${ccnxuser} -group ${ccnxgroup}
+}
 
 startupitem.pidfile     none
 startupitem.start       "su ${ccnxuser} -c \"${prefix}/bin/ccndstart\""
@@ -92,7 +97,7 @@ startupitem.stop        "su ${ccnxuser} -c \"${prefix}/bin/ccndstop\""
 startupitem.restart     "su ${ccnxuser} -c \"${prefix}/bin/ccndc -f ${prefix}/etc/ccnx/ccnd.conf\""
 
 startupitem.create      yes
-startupitem.name        ccnx
+startupitem.name        ${name}
 
 startupitem.netchange   yes
 startupitem.logevents   yes
