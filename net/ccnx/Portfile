@@ -89,7 +89,7 @@ patchfiles    patch-macports-customizations.diff
 startupitem.pidfile     none
 startupitem.start       "su ${ccnxuser} -c \"${prefix}/bin/ccndstart\""
 startupitem.stop        "su ${ccnxuser} -c \"${prefix}/bin/ccndstop\""
-startupitem.restart     "su ${ccnxuser} -c \"${prefix}/bin/ccndstop && sleep 3 && ${prefix}/bin/ccndstart\""
+startupitem.restart     "su ${ccnxuser} -c \"${prefix}/bin/ccndc -f ${prefix}/etc/ccnx/ccnd.conf\""
 
 startupitem.create      yes
 startupitem.name        ccnx
@@ -99,18 +99,25 @@ startupitem.logevents   yes
 startupitem.logfile     ${prefix}/var/log/ccnx.log
 
 notes "
-In order repo to work, you need to add the following lines at the end of your \[~/.bash_profile\]:
+In order repo to work, you need to add the following lines at the end of your 
+\[~/.bash_profile\]:
 
   export CCNR_DIRECTORY=${prefix}/etc/ccnx/repo
 
-To configure environment variables for ccnd, edit your \[${prefix}/etc/ccnx/ccndrc\]. For example,
+To configure environment variables for ccnd, edit your 
+\[${prefix}/etc/ccnx/ccndrc\]. For example,
   
   CCND_LOG=${prefix}/var/log/ccnd.log
   CCND_DEBUG=16
 
-To add static FIB entries, edit your \[${prefix}/etc/ccnx/ccnd.conf\]. For example,
+To add static FIB entries, edit your \[${prefix}/etc/ccnx/ccnd.conf\]. 
+For example,
 
   add ccnx:/ccnx.org udp 224.0.23.170 59695
 
-For more information and documentation, refer to man pages and http://www.ccnx.org website.
+Upon any networking change event (new connection or awaking from the sleep 
+phase), all static FIB entries will be reapplied automatically.
+
+For more information and documentation, refer to man pages and 
+http://www.ccnx.org website.
 "
