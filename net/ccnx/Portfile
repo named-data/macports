@@ -78,7 +78,9 @@ post-destroot {
     xinstall -d -o ${ccnxuser} -g ${ccnxgroup} "${destroot}${prefix}/etc/ccnx"
 
     # Copy a sample ccnd.conf file
-    xinstall -o ${ccnxuser} -g ${ccnxgroup} ${worksrcpath}/csrc/libexec/ccnd.conf.sample ${destroot}${prefix}/etc/ccnx/
+    xinstall -o ${ccnxuser} -g ${ccnxgroup} \
+        ${worksrcpath}/csrc/libexec/ccnd.conf.sample \
+        ${destroot}${prefix}/etc/ccnx/
 
     # Create a sample ccndrc file
     system "echo CCND_LOG=${prefix}/var/log/ccnd.log > \"${destroot}${prefix}/etc/ccnx/ccndrc.sample\""
@@ -89,6 +91,14 @@ post-activate {
     # log file needs to be owned by ${ccnxuser}, otherwise ccnd will not be able to write to it
     touch "${prefix}/var/log/ccnd.log"
     file attributes "${prefix}/var/log/ccnd.log" -owner ${ccnxuser} -group ${ccnxgroup}
+
+    # Make sure initial conf files are present and setup correctly
+    foreach f { ccnd.conf ccndrc } {
+        if {![file exists ${prefix}/etc/ccnx/${f}]} {
+            file copy ${prefix}/etc/ccnx/${f}.sample \
+                ${prefix}/etc/ccnx/${f}
+        }
+    }
 }
 
 startupitem.pidfile     none
