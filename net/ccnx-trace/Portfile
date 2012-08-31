@@ -1,0 +1,48 @@
+# -*- coding: utf-8; mode: tcl; tab-width: 4; indent-tabs-mode: nil; c-basic-offset: 4 -*- vim:fenc=utf-8:ft=tcl:et:sw=4:ts=4:sts=4
+# $Id$
+
+PortSystem          1.0
+
+name                ccnx-trace
+homepage            http://code.google.com/p/ccnx-trace/
+license             GPL-3+
+version             1.1
+revision            0
+
+categories          net ccnx
+platforms           darwin
+maintainers         ucla.edu:alexander.afanasyev
+
+description         traceroute-like functionality for CCNx
+
+long_description    The CCNx Trace is a tool with traceroute like functionality for CCNx. \
+                    The CCNx code can be obtained at http://www.ccnx.org. This tools is \
+                    written for troubleshooting problems in a network of ccnx nodes. This \
+                    tool can trace to a certain CCN URI, e.g, ccnx:/ndn/csu/netsec/index. \
+                    The tool displays all routes to the namespace and problems at each route, \
+                    if any. In this process, the tool bypasses the intermediate ccnx caches. 
+
+master_sites        http://ccnx-trace.googlecode.com/files/
+checksums           rmd160  31d1b240cff0450c61acf7ca8884bd8121b4310e \
+                    sha256  2c04ad0a109c5f40f7ab11ee12193ce116a3e29c6e98a3d31e44620626430a53
+
+use_configure       false
+depends_lib-append  port:ccnx
+
+# # User should be already created by ccnx port
+# set ccnxuser        ccnx
+# set ccnxgroup       ccnx
+# set ccnxdir         ${prefix}/etc/ccnx
+
+patchfiles          patch-Makefiles.diff
+
+set worksrcpath     ${workpath}/ccnx-trace
+
+build.env-append    CFLAGS=-I${prefix}/include \
+                    LDFLAGS=-L${prefix}/lib \
+                    CC=${configure.cc}
+
+destroot {
+    xinstall ${worksrcpath}/source/trace ${destroot}${prefix}/bin/ccntrace
+    xinstall ${worksrcpath}/source/ccn_traced ${destroot}${prefix}/bin/ccn_traced
+}

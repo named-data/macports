@@ -1,0 +1,51 @@
+diff --git Makefile Makefile
+new file mode 100644
+index 0000000..2836550
+--- /dev/null
++++ Makefile
+@@ -0,0 +1,5 @@
++
++all install clean uninstall: .always
++	(cd source; make $@)
++
++.always:
+diff --git source/Makefile source/Makefile
+index f6fba70..8531b0a 100644
+--- source/Makefile
++++ source/Makefile
+@@ -1,31 +1,27 @@
+-CC = gcc
+-CFLAGS = -g -Wall -Wpointer-arith -Wreturn-type -Wstrict-prototypes
+ LIBS = -lccn -lcrypto
+ 
+ PROGRAM_CL = trace
+ PROGRAM_SR = ccn_traced
+ 
+-INSTALL_DIR=/usr/local/bin
+-
+ all: $(PROGRAM_CL) $(PROGRAM_SR)
+ 
+ trace: trace_client.o
+-	$(CC) $(CFLAGS) -o trace trace_client.o $(LIBS)
++	$(CC) $(CFLAGS) $(LDFLAGS) -o trace trace_client.o $(LIBS)
+ 
+ trace_client.o:
+ 	$(CC) $(CFLAGS) -c trace_client.c
+ 
+ ccn_traced: trace_server.o
+-	$(CC) $(CFLAGS) -o ccn_traced trace_server.o $(LIBS)
++	$(CC) $(CFLAGS) $(LDFLAGS) -o ccn_traced trace_server.o $(LIBS)
+ 
+ trace_server.o:
+ 	$(CC) $(CFLAGS) -c trace_server.c
+ 
+ install: 
+-	install -m 0755 $(PROGRAM_CL) $(PROGRAM_SR) $(INSTALL_DIR)
++	install -m 0755 $(PROGRAM_CL) $(PROGRAM_SR) $(DESTDIR)$(INSTALL_DIR)/bin
+ 
+ uninstall: 
+-	rm -f $(INSTALL_DIR)/$(PROGRAM_CL) $(INSTALL_DIR)/$(PROGRAM_SR)
++	rm -f $(DESTDIR)$(INSTALL_DIR)/bin/$(PROGRAM_CL) $(DESTDIR)$(INSTALL_DIR)/bin/$(PROGRAM_SR)
+ 
+ clean:
+ 	rm -f *.o
