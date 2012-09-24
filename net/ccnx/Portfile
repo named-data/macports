@@ -2,11 +2,16 @@
 # $Id$
 
 PortSystem              1.0
+PortGroup               github 1.0
                         
+github.setup            ProjectCCNx ccnx c40186967b16c514e3f9ac7015578f736a5e3d18
+checksums               rmd160  d6db30a3db4c58dc386b22c0053cdd2d0beb2d68 \
+                        sha256  88b0fc174b88db7528e1cd200c02751832653931bc52e008576f86c8ee347603
+
 name                    ccnx
 homepage                http://www.ccnx.org/
 license                 GPL-2+ LGPL-2.1+
-version                 0.6.1
+version                 0.6.1-dev
 revision                0
 epoch                   0
 
@@ -26,16 +31,13 @@ long_description        Project CCNx(r) exists to develop, promote, and evaluate
                         research, and building applications with this technology, all \
                         contributing to its evolution. 
                         
-master_sites            http://www.ccnx.org/releases/
-checksums               rmd160 073478f3d5818b0e4fe09e21a727e5f3207e4277 \
-                        sha256 bfaae10c2c1a327d77f752737b60243e23fd8f3a7c7025ae92221ba0a700b889 
-                        
-use_parallel_build      yes
+use_parallel_build      no
                         
 depends_lib-append      port:openssl \
                         port:expat \
                         port:libpcap \
-                        port:libxml2
+                        port:libxml2 \
+                        port:asciidoc
                         
 set ccnxuser            ccnx
 set ccnxgroup           ccnx
@@ -55,7 +57,7 @@ variant apps requires java description {Enable build of reference applications} 
     configure.env-delete   BUILD_APPS=false
 }
 
-patchfiles              patch-macports-customizations.diff
+# patchfiles              patch-macports-customizations.diff
 
 post-patch {
     reinplace   "s|\$HOME/.ccnx/|${prefix}/etc/ccnx/|g" ${worksrcpath}/csrc/util/ccndstart.sh 
@@ -67,11 +69,12 @@ configure.env-append    OPENSSL_CFLAGS=-I${prefix}/include \
                         BUILD_JAVA=false \
                         BUILD_APPS=false \
 
-configure.cflags-append -DCCNX_DIR=\\\"${prefix}/etc/ccnx\\\" 
+configure.cflags -DCCNX_DIR=\\\"${prefix}/etc/ccnx\\\" -O0 -g
 
 build.env-append        OPENSSL_CFLAGS=-I${prefix}/include \
                         OPENSSL_LIBS=-L${prefix}/lib \
-                        INSTALL_BASE=${prefix}
+                        INSTALL_BASE=${prefix} \
+		
 
 post-destroot {
     # Create a configuration directory, which also a home directory for ${ccnxuser}
@@ -89,6 +92,7 @@ post-destroot {
 
 post-activate {
     # log file needs to be owned by ${ccnxuser}, otherwise ccnd will not be able to write to it
+    file mkdir "${prefix}/var/log"
     touch "${prefix}/var/log/ccnd.log"
     file attributes "${prefix}/var/log/ccnd.log" -owner ${ccnxuser} -group ${ccnxgroup}
 
