@@ -1,0 +1,50 @@
+# -*- coding: utf-8; mode: tcl; tab-width: 4; indent-tabs-mode: nil; c-basic-offset: 4 -*- vim:fenc=utf-8:ft=tcl:et:sw=4:ts=4:sts=4
+# $Id$
+
+PortSystem              1.0
+PortGroup               python 1.0
+		        
+name                    py-kiwi
+homepage                http://www.async.com.br/projects/kiwi
+license                 LGPL-2.1
+version                 1.9.29
+revision                0
+
+python.versions         26 27
+python.default_version  27
+
+categories              python devel gnome
+platforms               darwin
+maintainers             ucla.edu:alexander.afanasyev
+supported_archs         noarch
+
+description             Framework for Python applications with GUIs.
+
+long_description        Kiwi is a framework and a set of enhanced PyGTK widgets designed to \
+                        make building programs with graphical interfaces both easy to write \
+                        and easy to maintain. Kiwi is pure Python and should work \
+                        cross-platform, but is developed on Python 2.4, Linux ix86.
+
+distname                kiwi-${version}
+set branch              [join [lrange [split ${version} .] 0 1] .]
+master_sites            gnome:sources/kiwi/${branch}/
+use_xz                  yes
+
+checksums               rmd160  59e0659aaa535e962613d489934f9a1f89c9cc59 \
+                        sha256  32e43540150c03fda8ad55d22a389cf25356fc5216f6ee3febc4a3df9862ecad
+
+livecheck.type          regex
+livecheck.url           http://ftp.gnome.org/pub/gnome/sources/kiwi/${branch}/
+livecheck.regex         {LATEST-IS-(\d+(?:\.\d+)*)}
+
+if {$subport != $name} {
+   depends_lib-append      port:glib2 \
+                           port:py${python.version}-gobject \
+                           port:py${python.version}-gtk \
+                           port:py${python.version}-numeric
+   depends_build-append    port:pkgconfig
+}
+
+python.link_binaries_suffix
+
+
