@@ -7,7 +7,7 @@ name                ccnx-trace
 homepage            http://code.google.com/p/ccnx-trace/
 license             GPL-3+
 version             1.1
-revision            0
+revision            1
 
 categories          net ccnx
 platforms           darwin
@@ -46,3 +46,11 @@ destroot {
     xinstall ${worksrcpath}/source/trace ${destroot}${prefix}/bin/ccntrace
     xinstall ${worksrcpath}/source/ccn_traced ${destroot}${prefix}/bin/ccn_traced
 }
+
+startupitem.executable  "${prefix}/bin/ccn_traced"
+
+startupitem.create      yes
+startupitem.name        ${name}
+
+startupitem.netchange   no
+startupitem.logevents   no
