@@ -1,9 +1,9 @@
 diff --git csrc/util/ccnd-autoconfig.sh csrc/util/ccnd-autoconfig.sh
 new file mode 100755
-index 0000000..de31ba8
+index 0000000..648e866
 --- /dev/null
 +++ csrc/util/ccnd-autoconfig.sh
-@@ -0,0 +1,34 @@
+@@ -0,0 +1,44 @@
 +# Source file: util/ccnd-autoconfig.sh
 +# 
 +# Script that tries to (automatically) discover of a local ccnd gateway
@@ -24,6 +24,9 @@ index 0000000..de31ba8
 +D=`dirname "$0"`
 +export PATH="$D:$PATH"
 +
++# Removing any previously existed default route
++for i in `ccndstatus | grep "ccnx:/ face" | awk '{print $3}'`; do ccndc destroy face $i; done
++
 +# Set temporary multicast face
 +ccndc -t 10 add "/local/ndn" udp  224.0.23.170 59695 
 +
@@ -33,14 +36,21 @@ index 0000000..de31ba8
 +   echo "Local hub is not availble, trying to use DNS to get local configuration"
 +   # Try to use DNS search list to get default route information
 +   ccndc srv
++
++   # destroying multicast face
++   ccndstatus | grep 224.0.23.170:59695 | awk '{print $2}' | xargs ccndc destroy face
 +   exit 1
 +fi
 +
 +echo Setting default route to a local hub: "$info"
 +echo "$info" | xargs ccndc add / udp
++
++# destroying multicast face
++ccndstatus | grep 224.0.23.170:59695 | awk '{print $2}' | xargs ccndc destroy face
++
 diff --git csrc/util/ccnd-publish-local-info.sh csrc/util/ccnd-publish-local-info.sh
 new file mode 100755
-index 0000000..056ebde
+index 0000000..b433f69
 --- /dev/null
 +++ csrc/util/ccnd-publish-local-info.sh
 @@ -0,0 +1,34 @@
@@ -75,8 +85,8 @@ index 0000000..056ebde
 +   exit 1
 +fi
 +
-+echo $udp_face_info | ccnseqwriter -r -x 5 "/local/ndn/udp"
-+echo $local_prefix  | ccnseqwriter -r -x 5 "/local/ndn/prefix"
++echo $udp_face_info | ccnseqwriter -c 1 -r -x 5 "/local/ndn/udp"
++echo $local_prefix  | ccnseqwriter -c 1 -r -x 5 "/local/ndn/prefix"
 +
 diff --git csrc/util/dir.mk csrc/util/dir.mk
 index f29038f..94bc7b6 100644
