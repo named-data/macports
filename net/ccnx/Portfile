@@ -110,6 +110,11 @@ startupitem.start       "su ${ccnxuser} -c \"${prefix}/bin/ccndstart\" && sleep 
 startupitem.stop        "su ${ccnxuser} -c \"${prefix}/bin/ccndstop\""
 startupitem.restart     "su ${ccnxuser} -c \"${prefix}/bin/ccndc -f ${prefix}/etc/ccnx/ccnd.conf\" && su ${ccnxuser} -c \"${prefix}/bin/ccnd-autoconfig\""
 
+variant no_autoconf {
+    startupitem.start       "su ${ccnxuser} -c \"${prefix}/bin/ccndstart\""
+    startupitem.restart     "su ${ccnxuser} -c \"${prefix}/bin/ccndc -f ${prefix}/etc/ccnx/ccnd.conf\""
+}
+
 startupitem.create      yes
 startupitem.name        ${name}
 
