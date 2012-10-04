@@ -12,7 +12,7 @@ name                    ccnx
 homepage                http://www.ccnx.org/
 license                 GPL-2+ LGPL-2.1+
 version                 0.6.2
-revision                0
+revision                1
 epoch                   0
 
 categories              net ccnx
@@ -57,7 +57,7 @@ variant apps requires java description {Enable build of reference applications} 
     configure.env-delete   BUILD_APPS=false
 }
 
-# patchfiles              patch-macports-customizations.diff
+patchfiles              autoconfig.patch
 
 post-patch {
     reinplace   "s|\$HOME/.ccnx/|${prefix}/etc/ccnx/|g" ${worksrcpath}/csrc/util/ccndstart.sh 
@@ -106,9 +106,9 @@ post-activate {
 }
 
 startupitem.pidfile     none
-startupitem.start       "su ${ccnxuser} -c \"${prefix}/bin/ccndstart\""
+startupitem.start       "su ${ccnxuser} -c \"${prefix}/bin/ccndstart\" && sleep 1 && \"${prefix}/bin/ccnd-autoconfig\""
 startupitem.stop        "su ${ccnxuser} -c \"${prefix}/bin/ccndstop\""
-startupitem.restart     "su ${ccnxuser} -c \"${prefix}/bin/ccndc -f ${prefix}/etc/ccnx/ccnd.conf\""
+startupitem.restart     "su ${ccnxuser} -c \"${prefix}/bin/ccndc -f ${prefix}/etc/ccnx/ccnd.conf\" && su ${ccnxuser} -c \"${prefix}/bin/ccnd-autoconfig\""
 
 startupitem.create      yes
 startupitem.name        ${name}
