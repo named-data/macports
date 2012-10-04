@@ -37,14 +37,21 @@ build.env-append    CFLAGS=-I${prefix}/include \
 
 destroot {
     system "echo /ndn/`hostname` > ${ccnxdir}/ccnpingserver.conf.example"
-    xinstall -W ${worksrcpath} ccnping ccnpingserver ${destroot}${prefix}/bin/
+    xinstall -W ${worksrcpath} ccnping ccnpingserver ccnpingserver-wrapper ${destroot}${prefix}/bin/
 }
 
-patchfiles          patch-Makefile.diff
+patchfiles          patch-Makefile.diff \
+                    patch-wrapper.diff
 
 notes "
-ccnpingserver is usually run on a hub.  For example, on Arizona hub, ccnpingserver 
-is started by running \[ccnpingserver /ndn/arizona.edu\]. Then we can run 
-\[ccnping /ndn/arizona.edu\] from other nodes to test connectivity towards name 
-prefix /ndn/arizona.edu.
+ccnpingserver needs a local prefix to be configured in ${ccnxdir}/ccnpingserver.conf
+configuration file.  This file should contain just one line with local prefix, for example: /ndn/ucla.edu
 "
+
+startupitem.executable  "${prefix}/bin/ccnpingserver-wrapper"
+
+startupitem.create      yes
+startupitem.name        ${name}
+
+startupitem.netchange   no
+startupitem.logevents   no

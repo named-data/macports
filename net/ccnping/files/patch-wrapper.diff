@@ -1,0 +1,19 @@
+diff --git ccnpingserver-wrapper ccnpingserver-wrapper
+new file mode 100755
+index 0000000..c0993c8
+--- /dev/null
++++ ccnpingserver-wrapper
+@@ -0,0 +1,13 @@
++#!/bin/sh
++
++# This script should be installed in the same place as ccnd, ccndc, ccndsmoketest, ...
++# adjust the path to get consistency.
++D=`dirname "$0"`
++export PATH="$D:$PATH"
++
++if [ ! -f "$D/../etc/ccnx/ccnpingserver.conf" ]; then
++	sleep 100
++else
++	su - ccnx -c "$D/ccnpingserver `cat $D/../etc/ccnx/ccnpingserver.conf | xargs`"
++fi
++
