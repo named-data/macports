@@ -45,9 +45,12 @@ build.env-append    CFLAGS=-I${prefix}/include \
 destroot {
     xinstall ${worksrcpath}/source/trace ${destroot}${prefix}/bin/ccntrace
     xinstall ${worksrcpath}/source/ccn_traced ${destroot}${prefix}/bin/ccn_traced
+
+    system "echo \"su - ccnx -c '${prefix}/bin/ccn_traced'\"  > \"${destroot}${prefix}/bin/ccn_traced-wrapper\""
+    file attributes "${destroot}${prefix}/bin/ccn_traced-wrapper" -permissions 0755 
 }
 
-startupitem.executable  "${prefix}/bin/ccn_traced"
+startupitem.executable  "${prefix}/bin/ccn_traced-wrapper"
 
 startupitem.create      yes
 startupitem.name        ${name}
