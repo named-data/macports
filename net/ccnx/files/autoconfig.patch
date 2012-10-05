@@ -1,9 +1,33 @@
+diff --git csrc/libexec/ccndc.c csrc/libexec/ccndc.c
+index ecde5f0..9b91c65 100644
+--- csrc/libexec/ccndc.c
++++ csrc/libexec/ccndc.c
+@@ -649,6 +649,19 @@ ccndc_srv(struct ccndc_data *self,
+     if (res < 0) {
+         ccndc_warn(__LINE__, "Cannot register prefix [%s]\n", ccn_charbuf_as_string(uri));
+     }
++
++    ccn_charbuf_destroy (&uri);
++    uri = ccn_charbuf_create();
++    ccn_charbuf_append_string(uri, "ccnx:/autoconf-route");
++    if (domain_size != 0) {
++        ccn_uri_append_percentescaped(uri, domain, domain_size);
++    }
++    prefix->name_prefix = uri;
++    
++    res = ccndc_do_prefix_action(self, "prefixreg", prefix);
++    if (res < 0) {
++        ccndc_warn(__LINE__, "Cannot register prefix [%s]\n", ccn_charbuf_as_string(uri));
++    }
+     
+ Cleanup:
+     free(uri);
 diff --git csrc/util/ccnd-autoconfig.sh csrc/util/ccnd-autoconfig.sh
 new file mode 100755
-index 0000000..648e866
+index 0000000..2bef939
 --- /dev/null
 +++ csrc/util/ccnd-autoconfig.sh
-@@ -0,0 +1,44 @@
+@@ -0,0 +1,55 @@
 +# Source file: util/ccnd-autoconfig.sh
 +# 
 +# Script that tries to (automatically) discover of a local ccnd gateway
@@ -24,8 +48,14 @@ index 0000000..648e866
 +D=`dirname "$0"`
 +export PATH="$D:$PATH"
 +
-+# Removing any previously existed default route
-+for i in `ccndstatus | grep "ccnx:/ face" | awk '{print $3}'`; do ccndc destroy face $i; done
++ccndstatus | grep 224.0.23.170:59695 > /dev/null
++MCAST_EXISTED=$?
++
++# Removing any previously created (either by this script or ccndc srv command) default route
++for i in `ccndstatus | grep "ccnx:/autoconf-route face" | awk '{print $3}'`; do 
++   ccndc del / face $i
++   ccndc del /autoconf-route face $i
++done
 +
 +# Set temporary multicast face
 +ccndc -t 10 add "/local/ndn" udp  224.0.23.170 59695 
@@ -37,16 +67,21 @@ index 0000000..648e866
 +   # Try to use DNS search list to get default route information
 +   ccndc srv
 +
-+   # destroying multicast face
-+   ccndstatus | grep 224.0.23.170:59695 | awk '{print $2}' | xargs ccndc destroy face
++   if [ ! $MCAST_EXISTED ]; then
++      # destroying multicast face
++      ccndstatus | grep 224.0.23.170:59695 | awk '{print $2}' | xargs ccndc destroy face
++   fi
 +   exit 1
 +fi
 +
 +echo Setting default route to a local hub: "$info"
 +echo "$info" | xargs ccndc add / udp
++echo "$info" | xargs ccndc add /autoconf-route udp
 +
-+# destroying multicast face
-+ccndstatus | grep 224.0.23.170:59695 | awk '{print $2}' | xargs ccndc destroy face
++if [ ! $MCAST_EXISTED ]; then
++   # destroying multicast face
++   ccndstatus | grep 224.0.23.170:59695 | awk '{print $2}' | xargs ccndc destroy face
++fi
 +
 diff --git csrc/util/ccnd-publish-local-info.sh csrc/util/ccnd-publish-local-info.sh
 new file mode 100755
