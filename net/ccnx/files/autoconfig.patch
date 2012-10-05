@@ -1,27 +1,49 @@
 diff --git csrc/libexec/ccndc.c csrc/libexec/ccndc.c
-index ecde5f0..9b91c65 100644
+index ecde5f0..9be6e3b 100644
 --- csrc/libexec/ccndc.c
 +++ csrc/libexec/ccndc.c
-@@ -649,6 +649,19 @@ ccndc_srv(struct ccndc_data *self,
+@@ -580,9 +580,11 @@ ccndc_srv(struct ccndc_data *self,
+     int port = 0;
+     char port_str[10];
+     struct ccn_charbuf *uri;
++    struct ccn_charbuf *uri_auto;
+     struct ccn_face_instance *face;
+     struct ccn_face_instance *newface;
+     struct ccn_forwarding_entry *prefix;
++    struct ccn_forwarding_entry *prefix_auto;
+     int res;
+     
+     res = ccndc_query_srv(domain, domain_size, &host, &port, &proto);
+@@ -649,12 +651,29 @@ ccndc_srv(struct ccndc_data *self,
      if (res < 0) {
          ccndc_warn(__LINE__, "Cannot register prefix [%s]\n", ccn_charbuf_as_string(uri));
      }
 +
-+    ccn_charbuf_destroy (&uri);
-+    uri = ccn_charbuf_create();
-+    ccn_charbuf_append_string(uri, "ccnx:/autoconf-route");
-+    if (domain_size != 0) {
-+        ccn_uri_append_percentescaped(uri, domain, domain_size);
++    uri_auto = ccn_charbuf_create();
++    ccn_charbuf_append_string(uri_auto, "ccnx:/autoconf-route");
++    prefix_auto = parse_ccn_forwarding_entry(self, ccn_charbuf_as_string(uri_auto), NULL,
++                                        self->lifetime);
++    if (prefix_auto == NULL) {
++        res = -1;
++        goto Cleanup;
 +    }
-+    prefix->name_prefix = uri;
-+    
-+    res = ccndc_do_prefix_action(self, "prefixreg", prefix);
++
++    prefix_auto->faceid = prefix->faceid;
++    res = ccndc_do_prefix_action(self, "prefixreg", prefix_auto);
 +    if (res < 0) {
-+        ccndc_warn(__LINE__, "Cannot register prefix [%s]\n", ccn_charbuf_as_string(uri));
++        ccndc_warn(__LINE__, "Cannot register prefix_auto [%s]\n", ccn_charbuf_as_string(uri_auto));
 +    }
      
  Cleanup:
      free(uri);
++    free(uri_auto);
+     free(host);
+     ccn_face_instance_destroy(&face);
+     ccn_forwarding_entry_destroy(&prefix);
++    ccn_forwarding_entry_destroy(&prefix_auto);
+     return res;
+ }
+ 
 diff --git csrc/util/ccnd-autoconfig.sh csrc/util/ccnd-autoconfig.sh
 new file mode 100755
 index 0000000..2bef939
