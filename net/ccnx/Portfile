@@ -12,7 +12,7 @@ name                    ccnx
 homepage                http://www.ccnx.org/
 license                 GPL-2+ LGPL-2.1+
 version                 0.6.2
-revision                4
+revision                5
 epoch                   0
 
 categories              net ccnx

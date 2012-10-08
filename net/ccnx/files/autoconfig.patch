@@ -46,7 +46,7 @@ index ecde5f0..9be6e3b 100644
  
 diff --git csrc/util/ccnd-autoconfig.sh csrc/util/ccnd-autoconfig.sh
 new file mode 100755
-index 0000000..2bef939
+index 0000000..48ec9fc
 --- /dev/null
 +++ csrc/util/ccnd-autoconfig.sh
 @@ -0,0 +1,55 @@
@@ -89,7 +89,7 @@ index 0000000..2bef939
 +   # Try to use DNS search list to get default route information
 +   ccndc srv
 +
-+   if [ ! $MCAST_EXISTED ]; then
++   if [ $MCAST_EXISTED -eq 1 ]; then
 +      # destroying multicast face
 +      ccndstatus | grep 224.0.23.170:59695 | awk '{print $2}' | xargs ccndc destroy face
 +   fi
@@ -100,7 +100,7 @@ index 0000000..2bef939
 +echo "$info" | xargs ccndc add / udp
 +echo "$info" | xargs ccndc add /autoconf-route udp
 +
-+if [ ! $MCAST_EXISTED ]; then
++if [ $MCAST_EXISTED -eq 1 ]; then
 +   # destroying multicast face
 +   ccndstatus | grep 224.0.23.170:59695 | awk '{print $2}' | xargs ccndc destroy face
 +fi
