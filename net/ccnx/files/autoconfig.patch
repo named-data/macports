@@ -1,5 +1,22 @@
+diff --git csrc/libexec/ccndc-srv.c csrc/libexec/ccndc-srv.c
+index f6af4ee..a2483a1 100644
+--- csrc/libexec/ccndc-srv.c
++++ csrc/libexec/ccndc-srv.c
+@@ -188,10 +188,10 @@ ccndc_query_srv(const unsigned char *domain, int domain_size,
+     
+     if (hostp) {
+         size = strlen(host);
+-        *hostp = calloc(1, size);
++        *hostp = calloc(1, size+1);
+         if (!*hostp)
+             return (-1);
+-        strncpy(*hostp, host, size);
++        strncpy(*hostp, host, size+1);
+     }
+     if (portp) {
+         *portp = port;
 diff --git csrc/libexec/ccndc.c csrc/libexec/ccndc.c
-index ecde5f0..9be6e3b 100644
+index ecde5f0..76102ed 100644
 --- csrc/libexec/ccndc.c
 +++ csrc/libexec/ccndc.c
 @@ -580,9 +580,11 @@ ccndc_srv(struct ccndc_data *self,
@@ -35,9 +52,10 @@ index ecde5f0..9be6e3b 100644
 +    }
      
  Cleanup:
-     free(uri);
-+    free(uri_auto);
+-    free(uri);
      free(host);
++    ccn_charbuf_destroy(&uri);
++    ccn_charbuf_destroy(&uri_auto);
      ccn_face_instance_destroy(&face);
      ccn_forwarding_entry_destroy(&prefix);
 +    ccn_forwarding_entry_destroy(&prefix_auto);
