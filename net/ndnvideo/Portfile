@@ -1,0 +1,64 @@
+# -*- coding: utf-8; mode: tcl; tab-width: 4; indent-tabs-mode: nil; c-basic-offset: 4 -*- vim:fenc=utf-8:ft=tcl:et:sw=4:ts=4:sts=4
+# $Id$
+
+PortSystem          1.0
+PortGroup           github 1.0 
+PortGroup           python 1.0
+
+github.setup        remap ndnvideo a7cd19d43cee16e85fcfdb4ead15dcb7075b3eeb
+checksums           rmd160  d4ebdcb8c252a863c29058956bd5e13f17dd5e68 \
+                    sha256  8890d6eb24c720e40e45e6e2d4b446f41b40e1b6f4ff98fe908cba004e2c77d0
+
+name                py-ndnvideo
+homepage            https://github.com/remap/ndnvideo
+license             Unknown
+# version             
+revision            1
+
+python.versions         27
+python.default_version  27
+
+categories          net ccnx
+platforms           darwin
+maintainers         ucla.edu:alexander.afanasyev
+
+description         A video toolkit it publishes and plays live video in a segmented stream \
+                    that also seeks from buffer in CCNx repo
+
+# long_description     
+
+use_configure       false
+
+if {$subport != $name} {
+    depends_lib-append  port:ccnx \
+                        port:py${python.version}-pyccn \
+                        port:py${python.version}-gst-python \
+                        port:gst-ffmpeg \
+						port:gst-plugins-bad \
+						port:gst-plugins-base \
+						port:gst-plugins-gl \
+						port:gst-plugins-gl \
+						port:gst-plugins-gl \
+						port:gst-plugins-good \
+						port:gst-plugins-ugly \
+						port:gst-rtsp-server \
+						port:gstreamer 
+}
+
+patchfiles          fix-play.patch
+
+build {
+    reinplace "s|/usr/bin/env python|${python.bin}|g" ${worksrcpath}/videostreaming/play.py
+}
+
+destroot {
+    xinstall -d ${destroot}${python.pkgd}/ndnvideo
+    xinstall -d ${destroot}${python.pkgd}/ndnvideo/pytimecode
+
+    # system "echo ${worksrcpath}"
+    eval xinstall [glob ${worksrcpath}/videostreaming/*.py] ${destroot}${python.pkgd}/ndnvideo
+    eval xinstall [glob ${worksrcpath}/videostreaming/pytimecode/*.py] ${destroot}${python.pkgd}/ndnvideo/pytimecode
+
+    xinstall ${worksrcpath}/videostreaming/play.py ${destroot}${prefix}/bin/ndnplay
+}
+
