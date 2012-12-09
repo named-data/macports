@@ -4,15 +4,15 @@
 PortSystem              1.0
 PortGroup               github 1.0
                         
-github.setup            ProjectCCNx ccnx ccnx-0.6.2 
-checksums               rmd160  c0bb4963ff95a4b9b0211502715d3cda40300fbf \
-                        sha256  5ae09e02fd89b2d25f1f22bf3c0536636962c853f21e791b0ddf4aa9bba5c73d
+github.setup            ProjectCCNx ccnx ccnx-0.7.0
+checksums               rmd160  534f622acf2c67b61b75cf4bbaec483a91c25be0 \
+                        sha256  45c1e7c1c24774f41eedd6b7ceea30bacef148977602e85042a4b977371ad9e4
 
 name                    ccnx
 homepage                http://www.ccnx.org/
 license                 GPL-2+ LGPL-2.1+
-version                 0.6.2
-revision                6
+version                 0.7.0
+revision                0
 epoch                   0
 
 categories              net ccnx
@@ -57,7 +57,7 @@ variant apps requires java description {Enable build of reference applications} 
     configure.env-delete   BUILD_APPS=false
 }
 
-patchfiles              autoconfig.patch
+# patchfiles              autoconfig.patch
 
 post-patch {
     reinplace   "s|\$HOME/.ccnx/|${prefix}/etc/ccnx/|g" ${worksrcpath}/csrc/util/ccndstart.sh 
@@ -123,24 +123,11 @@ startupitem.logevents   yes
 startupitem.logfile     ${prefix}/var/log/ccnx.log
 
 notes "
-In order repo to work, you need to add the following lines at the end of your 
-\[~/.bash_profile\]:
 
-  export CCNR_DIRECTORY=${prefix}/etc/ccnx/repo
+If you want to run repo, please install and load a separate ccnx-repo package:
 
-To configure environment variables for ccnd, edit your 
-\[${prefix}/etc/ccnx/ccndrc\]. For example,
-  
-  CCND_LOG=${prefix}/var/log/ccnd.log
-  CCND_DEBUG=16
-
-To add static FIB entries, edit your \[${prefix}/etc/ccnx/ccnd.conf\]. 
-For example,
-
-  add ccnx:/ccnx.org udp 224.0.23.170 59695
-
-Upon any networking change event (new connection or awaking from the sleep 
-phase), all static FIB entries will be reapplied automatically.
+    # port install ccnx-repo
+    # port load ccnx-repo
 
 For more information and documentation, refer to man pages and 
 http://www.ccnx.org website.
