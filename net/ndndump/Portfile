@@ -5,13 +5,12 @@ PortSystem          1.0
 PortGroup           github 1.0
 
 github.setup        cawka ndndump 0.2
-checksums           rmd160  b823c30429858e380cbcd83e419295bdc5f00bcb \
-                    sha256  bd606798b13216db7bb7aa8c54d98f3245dc9a56690cb87598d739c2d27342bb
+checksums           rmd160  b506b1b8e385aba571b4f93e5088e87abf57923b \
+                    sha256  efc9ac08d039edce8ddcfad7b2e9b1d38c7fcdf729cd41bf19739001ac66f3ac
 
 name                ndndump
 homepage            https://github.com/cawka/ndndump
 license             GNU-3+
-version             0.1
 revision            0
 
 categories	        net ccnx
@@ -23,11 +22,9 @@ description	        tcpdump for NDN
 long_description    A simple tcpdump-like program that decodes and print out \
                     ccnb-formatted packets (see www.ccnx.org).
 
-use_autoreconf      yes
-
 depends_lib-append  port:ccnx \
                     port:boost \
                     port:libpcap
 
-configure.args-append   --with-ccnx=${prefix} \
-                        --with-boost=${prefix}
+configure.args-append   --ccnx=${prefix} \
+                        --boost-includes=${prefix}/include --boost-libs=${prefix}/lib
