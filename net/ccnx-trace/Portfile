@@ -2,12 +2,13 @@
 # $Id$
 
 PortSystem          1.0
+PortGroup           github 1.0
 
 name                ccnx-trace
 homepage            http://code.google.com/p/ccnx-trace/
 license             GPL-3+
-version             1.1
-revision            1
+version             1.1.1
+revision            0
 
 categories          net ccnx
 platforms           darwin
@@ -22,32 +23,36 @@ long_description    The CCNx Trace is a tool with traceroute like functionality 
                     The tool displays all routes to the namespace and problems at each route, \
                     if any. In this process, the tool bypasses the intermediate ccnx caches. 
 
-master_sites        http://ccnx-trace.googlecode.com/files/
-checksums           rmd160  31d1b240cff0450c61acf7ca8884bd8121b4310e \
-                    sha256  2c04ad0a109c5f40f7ab11ee12193ce116a3e29c6e98a3d31e44620626430a53
+github.setup        cawka ccnx-trace 1.1.1
+checksums           rmd160  fa569bf96d226c5317e1e518ace6b49eb4a05cba \
+                    sha256  b59043944900a219c9f8852c46fdb3864bca6949776e668deff106537415f99e
 
-use_configure       false
+#master_sites        http://ccnx-trace.googlecode.com/files/
+#checksums           rmd160  31d1b240cff0450c61acf7ca8884bd8121b4310e \
+#                    sha256  2c04ad0a109c5f40f7ab11ee12193ce116a3e29c6e98a3d31e44620626430a53
+
+use_autoreconf      yes
+use_configure       yes
 depends_lib-append  port:ccnx
 
-# # User should be already created by ccnx port
-# set ccnxuser        ccnx
-# set ccnxgroup       ccnx
-# set ccnxdir         ${prefix}/etc/ccnx
+#patchfiles          patch-Makefiles.diff
 
-patchfiles          patch-Makefiles.diff
+configure.args-append  --with-ccnx=${prefix} \
+                       --with-openssl=${prefix}
 
-set worksrcpath     ${workpath}/ccnx-trace
+post-patch {
+    reinplace   "s|LOGFILE \"ccn_traced.log\"|LOGFILE \"${prefix}/var/log/ccn_traced.log\"|g" ${worksrcpath}/source/conf.h
+    reinplace   "s|CCN_DIR \"/usr/local/bin/\"|CCN_DIR \"${prefix}/\"|g" ${worksrcpath}/source/conf.h
+}
 
-build.env-append    CFLAGS=-I${prefix}/include \
-                    LDFLAGS=-L${prefix}/lib \
-                    CC=${configure.cc}
-
-destroot {
-    xinstall ${worksrcpath}/source/trace ${destroot}${prefix}/bin/ccntrace
-    xinstall ${worksrcpath}/source/ccn_traced ${destroot}${prefix}/bin/ccn_traced
-
+post-destroot {
     system "echo \"su - ccnx -c '${prefix}/bin/ccn_traced'\"  > \"${destroot}${prefix}/bin/ccn_traced-wrapper\""
-    file attributes "${destroot}${prefix}/bin/ccn_traced-wrapper" -permissions 0755 
+    file attributes "${destroot}${prefix}/bin/ccn_traced-wrapper" -permissions 0755
+}
+
+post-activate {
+    touch "${prefix}/var/log/ccn_traced.log"
+    file attributes "${prefix}/var/log/ccn_traced.log" -owner ccnx -group ccnx
 }
 
 startupitem.executable  "${prefix}/bin/ccn_traced-wrapper"
@@ -56,4 +61,7 @@ startupitem.create      yes
 startupitem.name        ${name}
 
 startupitem.netchange   no
-startupitem.logevents   no
+
+startupitem.logevents   yes
+startupitem.logfile     ${prefix}/var/log/ccnx-trace-events.log
+
