@@ -4,9 +4,9 @@
 PortSystem          1.0
 PortGroup           github 1.0
 
-github.setup        cawka ndndump 0.1
-checksums           rmd160  05320e661ff050a7dcb188299091f7321ac8e008 \
-                    sha256  f7b09b67b19f89026e92a86d642205d5f674cce54605ae100cc045bc0e4d9634
+github.setup        cawka ndndump 0.2
+checksums           rmd160  b823c30429858e380cbcd83e419295bdc5f00bcb \
+                    sha256  bd606798b13216db7bb7aa8c54d98f3245dc9a56690cb87598d739c2d27342bb
 
 name                ndndump
 homepage            https://github.com/cawka/ndndump
