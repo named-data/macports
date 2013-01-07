@@ -6,9 +6,7 @@ PortSystem              1.0
 name                    ccnx-repo
 homepage                http://www.ccnx.org/
 license                 GPL-2+ LGPL-2.1+
-version                 0.6.2
-revision                0
-epoch                   0
+version                 0.7.0
 distfiles
 
 categories              net ccnx
@@ -21,7 +19,8 @@ depends_lib-append      port:ccnx
 set ccnxuser            ccnx
 set ccnxgroup           ccnx
 
-use_configure no
+supported_archs         noarch
+use_configure           no
 
 build       { }
 destroot    { 
