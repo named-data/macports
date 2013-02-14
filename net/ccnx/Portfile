@@ -3,25 +3,25 @@
 
 PortSystem              1.0
 PortGroup               github 1.0
-                        
-github.setup            ProjectCCNx ccnx ccnx-0.7.0
-checksums               rmd160  534f622acf2c67b61b75cf4bbaec483a91c25be0 \
-                        sha256  45c1e7c1c24774f41eedd6b7ceea30bacef148977602e85042a4b977371ad9e4
+
+github.setup            ProjectCCNx ccnx ccnx-0.7.1
+checksums               rmd160  432b7b94ed786e02e97bc66a719ab0ad833c53c0 \
+                        sha256  ee351efd2ac2200d5a03b16c342b1450c287af681b4f861f4b57dae2c6f2ed98
 
 name                    ccnx
 homepage                http://www.ccnx.org/
 license                 GPL-2+ LGPL-2.1+
-version                 0.7.0
+version                 0.7.1
 revision                0
 epoch                   0
 
 categories              net ccnx
 platforms               darwin
 maintainers             ucla.edu:alexander.afanasyev
-                        
+
 description             ProjectCCNx implementation of Content Centric Networking (CCN) / \
                         Named Data Networking (NDN) architecture
-                        
+
 long_description        Project CCNx(r) exists to develop, promote, and evaluate a new \
                         approach to communication architecture we call content-centric \
                         networking.  We seek to carry out this mission by creating and \
@@ -29,24 +29,24 @@ long_description        Project CCNx(r) exists to develop, promote, and evaluate
                         software reference implementation of those protocols.  We provide \
                         support for a community of people interested in experimentation, \
                         research, and building applications with this technology, all \
-                        contributing to its evolution. 
-                        
+                        contributing to its evolution.
+
 use_parallel_build      no
-                        
+
 depends_lib-append      port:openssl \
                         port:expat \
                         port:libpcap \
                         port:libxml2 \
                         port:asciidoc
-                        
+
 set ccnxuser            ccnx
 set ccnxgroup           ccnx
 set ccnxdir             ${prefix}/etc/ccnx
-                        
+
 add_users               ${ccnxuser} shell=/bin/sh group=${ccnxgroup} \
                         home=${ccnxdir} \
                         realname=CCNx\ Account
-                        
+
 default_variants        +java +apps
 
 variant java description {Enable Java API build} {
@@ -60,7 +60,7 @@ variant apps requires java description {Enable build of reference applications} 
 # patchfiles              autoconfig.patch
 
 post-patch {
-    reinplace   "s|\$HOME/.ccnx/|${prefix}/etc/ccnx/|g" ${worksrcpath}/csrc/util/ccndstart.sh 
+    reinplace   "s|\$HOME/.ccnx/|${prefix}/etc/ccnx/|g" ${worksrcpath}/csrc/util/ccndstart.sh
 }
 
 configure.env-append    OPENSSL_CFLAGS=-I${prefix}/include \
@@ -74,7 +74,7 @@ configure.cflags -DCCNX_DIR=\\\"${prefix}/etc/ccnx\\\" -O0 -g
 build.env-append        OPENSSL_CFLAGS=-I${prefix}/include \
                         OPENSSL_LIBS=-L${prefix}/lib \
                         INSTALL_BASE=${prefix} \
-		
+
 
 post-destroot {
     # Create a configuration directory, which also a home directory for ${ccnxuser}
@@ -86,7 +86,8 @@ post-destroot {
         ${destroot}${prefix}/etc/ccnx/
 
     # Create a sample ccndrc file
-    system "echo CCND_LOG=${prefix}/var/log/ccnd.log > \"${destroot}${prefix}/etc/ccnx/ccndrc.sample\""
+    system "echo CCNR_GLOBAL_PREFIX=/ndn/keys > \"${destroot}${prefix}/etc/ccnx/ccndrc.sample\""
+    system "echo CCND_LOG=${prefix}/var/log/ccnd.log >> \"${destroot}${prefix}/etc/ccnx/ccndrc.sample\""
     system "echo CCND_DEBUG=16 >> \"${destroot}${prefix}/etc/ccnx/ccndrc.sample\""
 }
 
@@ -129,6 +130,11 @@ If you want to run repo, please install and load a separate ccnx-repo package:
     # port install ccnx-repo
     # port load ccnx-repo
 
-For more information and documentation, refer to man pages and 
+You can add the following line into \"${prefix}/etc/ccnx/ccndrc\" in order to automatically
+start ccnx repo for the /ndn/keys prefix:
+
+    CCNR_GLOBAL_PREFIX=/ndn/keys
+
+For more information and documentation, refer to man pages and
 http://www.ccnx.org website.
 "
