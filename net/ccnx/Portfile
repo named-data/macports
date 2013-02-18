@@ -12,10 +12,8 @@ name                    ccnx
 homepage                http://www.ccnx.org/
 license                 GPL-2+ LGPL-2.1+
 version                 0.7.1
-revision                0
-epoch                   0
 
-categories              net ccnx
+categories              net
 platforms               darwin
 maintainers             ucla.edu:alexander.afanasyev
 
@@ -57,8 +55,6 @@ variant apps requires java description {Enable build of reference applications} 
     configure.env-delete   BUILD_APPS=false
 }
 
-# patchfiles              autoconfig.patch
-
 post-patch {
     reinplace   "s|\$HOME/.ccnx/|${prefix}/etc/ccnx/|g" ${worksrcpath}/csrc/util/ccndstart.sh
 }
@@ -69,7 +65,7 @@ configure.env-append    OPENSSL_CFLAGS=-I${prefix}/include \
                         BUILD_JAVA=false \
                         BUILD_APPS=false \
 
-configure.cflags -DCCNX_DIR=\\\"${prefix}/etc/ccnx\\\" -O0 -g
+configure.cflags        -DCCNX_DIR=\\\"${prefix}/etc/ccnx\\\" -O0 -g
 
 build.env-append        OPENSSL_CFLAGS=-I${prefix}/include \
                         OPENSSL_LIBS=-L${prefix}/lib \
@@ -124,7 +120,6 @@ startupitem.logevents   yes
 startupitem.logfile     ${prefix}/var/log/ccnx.log
 
 notes "
-
 If you want to run repo, please install and load a separate ccnx-repo package:
 
     # port install ccnx-repo
