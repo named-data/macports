@@ -56,7 +56,7 @@ variant apps requires java description {Enable build of reference applications} 
 }
 
 post-patch {
-    reinplace   "s|\$HOME/.ccnx/|${prefix}/etc/ccnx/|g" ${worksrcpath}/csrc/util/ccndstart.sh
+    reinplace   "s|\$HOME/.ccnx/|${ccnxdir}/|g" ${worksrcpath}/csrc/util/ccndstart.sh
 }
 
 configure.env-append    OPENSSL_CFLAGS=-I${prefix}/include \
@@ -65,7 +65,7 @@ configure.env-append    OPENSSL_CFLAGS=-I${prefix}/include \
                         BUILD_JAVA=false \
                         BUILD_APPS=false \
 
-configure.cflags        -DCCNX_DIR=\\\"${prefix}/etc/ccnx\\\" -O0 -g
+configure.cflags        -DCCNX_DIR=\\\"${ccnxdir}\\\"
 
 build.env-append        OPENSSL_CFLAGS=-I${prefix}/include \
                         OPENSSL_LIBS=-L${prefix}/lib \
@@ -74,17 +74,17 @@ build.env-append        OPENSSL_CFLAGS=-I${prefix}/include \
 
 post-destroot {
     # Create a configuration directory, which also a home directory for ${ccnxuser}
-    xinstall -d -o ${ccnxuser} -g ${ccnxgroup} "${destroot}${prefix}/etc/ccnx"
+    xinstall -d -o ${ccnxuser} -g ${ccnxgroup} "${destroot}${ccnxdir}"
 
     # Copy a sample ccnd.conf file
     xinstall -o ${ccnxuser} -g ${ccnxgroup} \
         ${worksrcpath}/csrc/libexec/ccnd.conf.sample \
-        ${destroot}${prefix}/etc/ccnx/
+        ${destroot}${ccnxdir}/
 
     # Create a sample ccndrc file
-    system "echo CCNR_GLOBAL_PREFIX=/ndn/keys > \"${destroot}${prefix}/etc/ccnx/ccndrc.sample\""
-    system "echo CCND_LOG=${prefix}/var/log/ccnd.log >> \"${destroot}${prefix}/etc/ccnx/ccndrc.sample\""
-    system "echo CCND_DEBUG=16 >> \"${destroot}${prefix}/etc/ccnx/ccndrc.sample\""
+    system "echo CCNR_GLOBAL_PREFIX=/ndn/keys > \"${destroot}${ccnxdir}/ccndrc.sample\""
+    system "echo CCND_LOG=${prefix}/var/log/ccnd.log >> \"${destroot}${ccnxdir}/ccndrc.sample\""
+    system "echo CCND_DEBUG=16 >> \"${destroot}${ccnxdir}/ccndrc.sample\""
 }
 
 post-activate {
@@ -95,21 +95,21 @@ post-activate {
 
     # Make sure initial conf files are present and setup correctly
     foreach f { ccnd.conf ccndrc } {
-        if {![file exists ${prefix}/etc/ccnx/${f}]} {
-            file copy ${prefix}/etc/ccnx/${f}.sample \
-                ${prefix}/etc/ccnx/${f}
+        if {![file exists ${ccnxdir}/${f}]} {
+            file copy ${ccnxdir}/${f}.sample \
+                ${ccnxdir}/${f}
         }
     }
 }
 
 startupitem.pidfile     none
-startupitem.start       "su ${ccnxuser} -c \"${prefix}/bin/ccndstart\" && sleep 1 && \"${prefix}/bin/ccnd-autoconfig\""
+startupitem.start       "su ${ccnxuser} -c \"${prefix}/bin/ccndstart\" && sleep 5 && \"${prefix}/bin/ccnd-autoconfig\""
 startupitem.stop        "su ${ccnxuser} -c \"${prefix}/bin/ccndstop\""
-startupitem.restart     "su ${ccnxuser} -c \"${prefix}/bin/ccndc -f ${prefix}/etc/ccnx/ccnd.conf\" && su ${ccnxuser} -c \"${prefix}/bin/ccnd-autoconfig\""
+startupitem.restart     "su ${ccnxuser} -c \"${prefix}/bin/ccndc -f ${ccnxdir}/ccnd.conf\" && su ${ccnxuser} -c \"${prefix}/bin/ccnd-autoconfig\""
 
-variant no_autoconf {
+variant no_autoconf description {Disable automatic detection of local ccnx hub} {
     startupitem.start       "su ${ccnxuser} -c \"${prefix}/bin/ccndstart\""
-    startupitem.restart     "su ${ccnxuser} -c \"${prefix}/bin/ccndc -f ${prefix}/etc/ccnx/ccnd.conf\""
+    startupitem.restart     "su ${ccnxuser} -c \"${prefix}/bin/ccndc -f ${ccnxdir}/ccnd.conf\""
 }
 
 startupitem.create      yes
@@ -125,7 +125,7 @@ If you want to run repo, please install and load a separate ccnx-repo package:
     # port install ccnx-repo
     # port load ccnx-repo
 
-You can add the following line into \"${prefix}/etc/ccnx/ccndrc\" in order to automatically
+You can add the following line into \"${ccnxdir}/ccndrc\" in order to automatically
 start ccnx repo for the /ndn/keys prefix:
 
     CCNR_GLOBAL_PREFIX=/ndn/keys
