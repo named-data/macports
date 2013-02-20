@@ -5,8 +5,8 @@ PortSystem              1.0
 PortGroup               github 1.0
 
 github.setup            cawka ccnx ccnx-0.7.1-ucla-1
-checksums               rmd160  f18671c97227c5ae1f6764aa43dbf62729919a86 \
-                        sha256  f67d0b62fff3163a7f6922a8f9ec51eab16eff4fde0e7b2d5c71e0bbf09553aa
+checksums               rmd160  4bfb9b0f73b22c651d053ef1ae12409eec11c534 \
+                        sha256  6da676d089b445831a61200ba1f8e1efd94b95aeba666b617d97c4744f84ba5d
 
 name                    ccnx
 homepage                http://www.ccnx.org/
@@ -93,6 +93,8 @@ post-activate {
     file mkdir "${prefix}/var/log"
     touch "${prefix}/var/log/ccnd.log"
     file attributes "${prefix}/var/log/ccnd.log" -owner ${ccnxuser} -group ${ccnxgroup}
+    file mkdir "${prefix}/var/run/ccnd"
+    file attributes "${prefix}/var/run/ccnd" -owner ${ccnxuser} -group ${ccnxgroup}
 
     # Make sure initial conf files are present and setup correctly
     foreach f { ccnd.conf ccndrc } {
@@ -104,8 +106,8 @@ post-activate {
 }
 
 startupitem.pidfile     none
-startupitem.start       "su ${ccnxuser} -c \"${prefix}/bin/ccndstart\" && sleep 5 && \"${prefix}/bin/ccnd-autoconfig\""
-startupitem.stop        "su ${ccnxuser} -c \"${prefix}/bin/ccndstop\""
+startupitem.start       "su ${ccnxuser} -c \"${prefix}/bin/ccndstart\" && sleep 5 && su ${ccnxuser} -c \"${prefix}/bin/ccnd-autoconfig -d ${prefix}/var/run/ccnd/autoconfig.pid &\""
+startupitem.stop        "su ${ccnxuser} -c \"kill `cat ${prefix}/var/run/ccnd/autoconfig.pid`\" ; su ${ccnxuser} -c \"${prefix}/bin/ccndstop\""
 startupitem.restart     "su ${ccnxuser} -c \"${prefix}/bin/ccndc -f ${ccnxdir}/ccnd.conf\" && su ${ccnxuser} -c \"${prefix}/bin/ccnd-autoconfig\""
 
 variant no_autoconf description {Disable automatic detection of local ccnx hub} {
