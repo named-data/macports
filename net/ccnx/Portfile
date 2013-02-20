@@ -65,7 +65,8 @@ configure.env-append    OPENSSL_CFLAGS=-I${prefix}/include \
                         BUILD_JAVA=false \
                         BUILD_APPS=false \
 
-configure.cflags        -DCCNX_DIR=\\\"${ccnxdir}\\\"
+configure.cflags        -DCCNX_DIR=\\\"${ccnxdir}\\\" \
+                        -O2
 
 build.env-append        OPENSSL_CFLAGS=-I${prefix}/include \
                         OPENSSL_LIBS=-L${prefix}/lib \
