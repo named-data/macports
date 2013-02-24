@@ -4,9 +4,9 @@
 PortSystem              1.0
 PortGroup               github 1.0
 
-github.setup            cawka ccnx ccnx-0.7.1-ucla-1
-checksums               rmd160  4bfb9b0f73b22c651d053ef1ae12409eec11c534 \
-                        sha256  6da676d089b445831a61200ba1f8e1efd94b95aeba666b617d97c4744f84ba5d
+github.setup            named-data ccnx ccnx-0.7.1-ucla-1
+checksums               rmd160  0835f02b8ff649bc3b435b3f03c4c747566bd34a \
+                        sha256  1c2ee8a065fd162881a20a359c00f2b4a7185c1e69d2b3f1b5815c623b7ab62b
 
 name                    ccnx
 homepage                http://www.ccnx.org/
