@@ -1,0 +1,59 @@
+# -*- coding: utf-8; mode: tcl; tab-width: 4; indent-tabs-mode: nil; c-basic-offset: 4 -*- vim:fenc=utf-8:ft=tcl:et:sw=4:ts=4:sts=4
+# $Id$
+
+PortSystem              1.0
+PortGroup               github 1.0
+
+github.setup            cawka ndn-js be2e69ba887beda1d03d861b9f8a20e19dc949b8
+checksums               rmd160  6268908d006a8d32e02ab06fd5956927049e3c7f \
+                        sha256  6d3a53bfbf5fde72f441baee610c6f2971937fa0c5d4a0c9806da40d8882b85d
+
+name                    ccnx-wsproxy
+homepage                http://github.com/remap/ndn-js
+license                 Permissive BSD
+version                 0.1
+
+categories              net ccnx
+maintainers             ucla.edu:alexander.afanasyev
+
+description             WebSocket proxy server between NDN javascript stack and ccnx
+
+depends_lib-append      port:ccnx \
+                        port:nodejs \
+                        port:npm
+
+set ccnxuser            ccnx
+
+supported_archs         noarch
+use_configure           yes
+
+configure.cmd           ./waf configure
+configure.args-append   --no-js
+
+build       { }
+
+destroot.cmd            ./waf
+destroot.destdir        --destdir=${destroot}
+
+post-destroot {
+    system "echo \"su ${ccnxuser} -c 'NODE_PATH=${prefix}/lib/node_modules ${prefix}/bin/node ${prefix}/bin/ccnx-wsproxy-tcp.js \\\$0'\"  > \"${destroot}${prefix}/bin/ccnx-wsproxy-tcp\""
+    file attributes "${destroot}${prefix}/bin/ccnx-wsproxy-tcp" -permissions 0755
+
+    system "echo \"su ${ccnxuser} -c 'NODE_PATH=${prefix}/lib/node_modules ${prefix}/bin/node ${prefix}/bin/ccnx-wsproxy-udp.js \\\$0'\"  > \"${destroot}${prefix}/bin/ccnx-wsproxy-udp\""
+    file attributes "${destroot}${prefix}/bin/ccnx-wsproxy-udp" -permissions 0755
+}
+
+post-activate {
+    # install ccnx-wsproxy dependencies using npm
+    system "${prefix}/bin/npm install -g ws"
+    system "${prefix}/bin/npm install -g node-getopt"
+}
+
+startupitem.executable  ${prefix}/bin/ccnx-wsproxy-udp -c 127.0.0.1 -m 40 -L 1
+
+startupitem.create      yes
+startupitem.name        ${name}
+
+startupitem.netchange   no
+startupitem.logevents   yes
+startupitem.logfile     ${prefix}/var/log/ccnx-wsproxy.log
