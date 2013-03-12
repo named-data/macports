@@ -4,14 +4,15 @@
 PortSystem              1.0
 PortGroup               github 1.0
 
-github.setup            named-data ccnx ccnx-0.7.1-ucla-2
-checksums               rmd160  1b8292c9cc21f3bf15c0f1f89b063254f2a323ed \
-                        sha256  7301b7a7814a2691fcb171b0b9fb7ed21317103c4d7e166b194d5135a39bdbd6
+github.setup            named-data ccnx ccnx-0.7.1-ndn-1
+checksums               rmd160  e31ece65157a108859a1dd3bcff76a6a9f45f57c \
+                        sha256  6fe26ed5e8a93d33a344a59257efce2d5fee1e8a35df31dd443601b06e9d46ab
 
 name                    ccnx
 homepage                http://www.ccnx.org/
 license                 GPL-2+ LGPL-2.1+
-version                 0.7.1.ucla.2
+version                 0.7.1.ndn.1
+epoch                   1
 
 categories              net
 platforms               darwin
@@ -28,8 +29,6 @@ long_description        Project CCNx(r) exists to develop, promote, and evaluate
                         support for a community of people interested in experimentation, \
                         research, and building applications with this technology, all \
                         contributing to its evolution.
-
-use_parallel_build      no
 
 depends_lib-append      port:openssl \
                         port:expat \
@@ -62,6 +61,7 @@ post-patch {
 configure.env-append    OPENSSL_CFLAGS=-I${prefix}/include \
                         OPENSSL_LIBS=-L${prefix}/lib \
                         INSTALL_BASE=${prefix} \
+                        INSTALL_MAN=${prefix}/share/man \
                         BUILD_JAVA=false \
                         BUILD_APPS=false \
 
@@ -123,16 +123,25 @@ startupitem.logevents   yes
 startupitem.logfile     ${prefix}/var/log/ccnx.log
 
 notes "
-If you want to run repo, please install and load a separate ccnx-repo package:
-
-    # port install ccnx-repo
-    # port load ccnx-repo
 
 You can add the following line into \"${ccnxdir}/ccndrc\" in order to automatically
 start ccnx repo for the /ndn/keys prefix:
 
     CCNR_GLOBAL_PREFIX=/ndn/keys
 
-For more information and documentation, refer to man pages and
-http://www.ccnx.org website.
+For more information and documentation, refer to man pages and http://www.ccnx.org website.
+
+If you have your public key signed by NDN testbed operators and you installed the certificate
+\(using ndn-install-pubcert command\), you can enable automatic configuration of the default
+route using your key.  To do so, you need to run the following commands once:
+
+  # extract public key from ccnx user
+  sudo HOME=${ccnxdir} ndn-extract-public-key > /tmp/ccnx.pem
+
+  # sign public key of the ccnx user
+  ndn-sign-key -i \"ccnx-autoconfig\" /tmp/ccnx.pem
+
+  # install certification of the public key
+  sudo HOME=${ccnxdir} ndn-install-pubcert /tmp/ccnx.pubcert
+
 "
