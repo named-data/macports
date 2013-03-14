@@ -4,14 +4,14 @@
 PortSystem              1.0
 PortGroup               github 1.0
 
-github.setup            named-data ccnx ccnx-0.7.1-ndn-1
-checksums               rmd160  e31ece65157a108859a1dd3bcff76a6a9f45f57c \
-                        sha256  6fe26ed5e8a93d33a344a59257efce2d5fee1e8a35df31dd443601b06e9d46ab
+github.setup            named-data ccnx ccnx-0.7.1-ndn-2
+checksums               rmd160  a6a936f088c6d884ab73f04d3ae2409de093593a \
+                        sha256  9bb928b438544dac4e759d6736740d69f5f403ac98ba39476025aa4f34c4410d
 
 name                    ccnx
 homepage                http://www.ccnx.org/
 license                 GPL-2+ LGPL-2.1+
-version                 0.7.1.ndn.1
+version                 0.7.1.ndn.2
 epoch                   1
 
 categories              net
