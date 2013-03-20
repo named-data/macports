@@ -13,7 +13,7 @@ name                py-ndnvideo
 homepage            https://github.com/remap/ndnvideo
 license             Unknown
 # version             
-revision            1
+revision            2
 
 python.versions         27
 python.default_version  27
@@ -31,19 +31,18 @@ use_configure       false
 
 if {$subport != $name} {
     depends_lib-append  port:ccnx \
-                        port:py${python.version}-pyccn \
-                        port:py${python.version}-gst-python \
-                        port:gst-ffmpeg \
-						port:gst-plugins-bad \
-						port:gst-plugins-base \
-						port:gst-plugins-gl \
-						port:gst-plugins-gl \
-						port:gst-plugins-gl \
-						port:gst-plugins-good \
-						port:gst-plugins-ugly \
-						port:gst-rtsp-server \
-						port:gstreamer 
+        port:py${python.version}-pyccn \
+        port:py${python.version}-gst-python \
+        port:gstreamer010-gst-ffmpeg \
+        port:gstreamer010-gst-plugins-bad \
+        port:gstreamer010-gst-plugins-base \
+        port:gstreamer010-gst-plugins-gl \
+        port:gstreamer010-gst-plugins-good \
+        port:gstreamer010-gst-plugins-ugly \
+        port:gstreamer010-gst-rtsp \
+        port:gstreamer010 
 }
+# port:gstreamer010-gst-rtsp-server \
 
 patchfiles          fix-play.patch
 
