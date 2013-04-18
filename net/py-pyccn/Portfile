@@ -4,17 +4,17 @@
 PortSystem              1.0
 PortGroup               python 1.0
 PortGroup               github 1.0
-                        
+
 # github.setup should be performed before name directive, otherwise port name becomes incorrect
-github.setup            remap PyCCN fc486a1f253e937fb7de40c2a8fc900ca23c166d
-checksums               rmd160  18ac8a27c1f683ee28849f84a3212dc40c1e97de \
-                        sha256  7b1a8f61e0379290c9c3043bfe0072a3fcb8aa9f70f9e53fafe612ba571ddb2d
+github.setup            named-data PyCCN 86514defb2862231020750bc447dc0377a407592
+checksums               rmd160  eb78fb0a5985ec6260e28cf03cb0747b9b04804b \
+                        sha256  4bfa2734e2b0dcaa886083c65292c014daca87ca631a9363184da59ff9c429dd
 
 name                    py-pyccn
 homepage                https://github.com/remap/PyCCN
 license                 BSD
 version                 0.2
-revision                0
+revision                1
 
 python.versions         27
 python.default_version  27
@@ -49,7 +49,7 @@ configure.env-append    OPENSSL_INCLUDES=-I${prefix}/include \
                         OPENSSL_LIBS="-lssl -lcrypto"
 
 build.cmd               make
-build.target    
+build.target
 
 destroot.cmd            make
 destroot.target         install
