@@ -4,15 +4,15 @@
 PortSystem              1.0
 PortGroup               github 1.0
 
-github.setup            cawka ndn-js ad659623235310878b4a4612a9e316b54774fab3
-checksums               rmd160  9a70f864d2c7c3f60635524d7ff38434cde957cc \
-                        sha256  f5072d45be76cb58eb926313381a99cfb66e04c1ff49b99695603b06143eb7c9
+github.setup            named-data ndn-js aa0b4120afd1d33a87e9003906ecc538a20dbc39
+checksums               rmd160  6fe5946e31095d0a700bc9fc9edfad2176591cb9 \
+                        sha256  4ff92fa6e70964ff651beb54c84c9a694354bcc8018385bb25eea14749d48a79
 
 name                    ccnx-wsproxy
-homepage                http://github.com/remap/ndn-js
+homepage                http://github.com/named-data/ndn-js
 license                 Permissive BSD
 version                 0.1
-revision                1
+revision                2
 
 categories              net ccnx
 maintainers             ucla.edu:alexander.afanasyev
