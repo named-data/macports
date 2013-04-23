@@ -10,6 +10,7 @@ version             2.4.2
 license             AGPL-3
 categories          databases
 maintainers         ryandesign
+revision            1
 
 description         High-performance, schema-free document-oriented database
 long_description    ${description}
@@ -28,7 +29,8 @@ depends_build       port:scons
 depends_lib         port:libpcap \
                     port:pcre \
                     port:snappy \
-                    port:v8
+                    port:v8 \
+                    port:boost
 
 license_noconflict  scons
 
@@ -63,6 +65,7 @@ build.args          --cc=${configure.cc} \
                     --full \
                     --use-system-pcre \
                     --use-system-snappy \
+                    --use-system-boost \
                     --use-system-v8 \
                     --extralib=pcre,pcrecpp,snappy
 
