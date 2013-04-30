@@ -3,18 +3,22 @@
 
 PortSystem              1.0
 PortGroup               python 1.0
-PortGroup               github 1.0
+# PortGroup               github 1.0
 
 # github.setup should be performed before name directive, otherwise port name becomes incorrect
-github.setup            named-data PyCCN 86514defb2862231020750bc447dc0377a407592
-checksums               rmd160  eb78fb0a5985ec6260e28cf03cb0747b9b04804b \
-                        sha256  4bfa2734e2b0dcaa886083c65292c014daca87ca631a9363184da59ff9c429dd
+# github.setup            named-data PyCCN 86514defb2862231020750bc447dc0377a407592
+# checksums               rmd160  eb78fb0a5985ec6260e28cf03cb0747b9b04804b \
+#                         sha256  4bfa2734e2b0dcaa886083c65292c014daca87ca631a9363184da59ff9c429dd
+
+fetch.type              git
+git.url                 /Users/cawka/Devel/ndn/PyCCN
+git.branch              9e6064ae55c6f3ee88f1ae94605a8e5d01c5a8e7
 
 name                    py-pyccn
 homepage                https://github.com/remap/PyCCN
 license                 BSD
 version                 0.2
-revision                1
+revision                2
 
 python.versions         27
 python.default_version  27
@@ -33,25 +37,22 @@ long_description        A "thin" implementation, which supports Python \
 
 depends_lib-append	    port:ccnx
 
-use_autoreconf          yes
 use_configure           yes
 
-pre-configure {
-    file mkdir "${worksrcpath}/build-aux"
+configure.cmd           ./waf configure
 
-    configure.env-append    PYTHON_SITE_PKG=${python.pkgd}
+pre-configure {
+    configure.env-append    PYTHONDIR=${python.pkgd} \
+                            PYTHONARCHDIR=${python.pkgd}
     configure.python        ${python.bin}
 }
 
-configure.args-append   --with-ccn=${prefix}
-configure.env-append    OPENSSL_INCLUDES=-I${prefix}/include \
-                        OPENSSL_LDFLAGS=-L${prefix}/lib \
-                        OPENSSL_LIBS="-lssl -lcrypto"
+configure.args-append   --ccnx=${prefix}
 
-build.cmd               make
-build.target
+build.cmd               ./waf
+build.target            build
 
-destroot.cmd            make
+destroot.cmd            ./waf
 destroot.target         install
-destroot.destdir        "DESTDIR=${destroot}"
+destroot.destdir        --destdir=${destroot}
 
