@@ -12,6 +12,7 @@ name                    ccnx
 homepage                http://www.ccnx.org/
 license                 GPL-2+ LGPL-2.1+
 version                 0.7.2rc1.ndn.1
+epoch                   3
 
 categories              net
 platforms               darwin
