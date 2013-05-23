@@ -4,11 +4,14 @@
 PortSystem          1.0
 PortGroup           github 1.0
 
+github.setup        cawka ccnx-trace 1.1.3
+checksums           rmd160  d7119d5caaaa1eb28d7fcf4ea432e2af325e414c \
+                    sha256  ef37df403fe99dc9aaed7bd5c45462f8e1e050f37c5a0a182e0b8fd4b6335c40
+
 name                ccnx-trace
 homepage            http://code.google.com/p/ccnx-trace/
 license             GPL-3+
-version             1.1.1
-revision            0
+version             1.1.3
 
 categories          net ccnx
 platforms           darwin
@@ -23,26 +26,15 @@ long_description    The CCNx Trace is a tool with traceroute like functionality 
                     The tool displays all routes to the namespace and problems at each route, \
                     if any. In this process, the tool bypasses the intermediate ccnx caches. 
 
-github.setup        cawka ccnx-trace 1.1.1
-checksums           rmd160  fa569bf96d226c5317e1e518ace6b49eb4a05cba \
-                    sha256  b59043944900a219c9f8852c46fdb3864bca6949776e668deff106537415f99e
-
-#master_sites        http://ccnx-trace.googlecode.com/files/
-#checksums           rmd160  31d1b240cff0450c61acf7ca8884bd8121b4310e \
-#                    sha256  2c04ad0a109c5f40f7ab11ee12193ce116a3e29c6e98a3d31e44620626430a53
-
 use_autoreconf      yes
 use_configure       yes
 depends_lib-append  port:ccnx
-
-#patchfiles          patch-Makefiles.diff
 
 configure.args-append  --with-ccnx=${prefix} \
                        --with-openssl=${prefix}
 
 post-patch {
     reinplace   "s|LOGFILE \"ccn_traced.log\"|LOGFILE \"${prefix}/var/log/ccn_traced.log\"|g" ${worksrcpath}/source/conf.h
-    reinplace   "s|CCN_DIR \"/usr/local/bin/\"|CCN_DIR \"${prefix}/\"|g" ${worksrcpath}/source/conf.h
 }
 
 post-destroot {
