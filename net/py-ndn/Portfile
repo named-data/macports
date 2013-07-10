@@ -3,22 +3,16 @@
 
 PortSystem              1.0
 PortGroup               python 1.0
-# PortGroup               github 1.0
+PortGroup               github 1.0
 
-# github.setup should be performed before name directive, otherwise port name becomes incorrect
-# github.setup            named-data PyCCN 86514defb2862231020750bc447dc0377a407592
-# checksums               rmd160  eb78fb0a5985ec6260e28cf03cb0747b9b04804b \
-#                         sha256  4bfa2734e2b0dcaa886083c65292c014daca87ca631a9363184da59ff9c429dd
+github.setup            named-data PyCCN v0.3
+checksums               rmd160  9a14b55a30b6ab762dfb28035d468bfab116b765 \
+                        sha256  c17f9cb6aa1670f967e8190a3ebdc98e594429feb7f447b252c82f96a75d6676
 
-fetch.type              git
-git.url                 /Users/cawka/Devel/ndn/PyCCN
-git.branch              9e6064ae55c6f3ee88f1ae94605a8e5d01c5a8e7
-
-name                    py-pyccn
-homepage                https://github.com/remap/PyCCN
+name                    py-ndn
+homepage                https://github.com/named-data/py-ndn
 license                 BSD
-version                 0.2
-revision                2
+version                 0.3
 
 python.versions         27
 python.default_version  27
@@ -27,10 +21,10 @@ categories	            net ccnx python
 platforms	            darwin
 maintainers             ucla.edu:alexander.afanasyev
 
-description	            PyCCN - CCN bindings for Python
+description	            py-ndn - NDN bindings for Python
 
 long_description        A "thin" implementation, which supports Python \
-                        objects corresponding to the major CCNx entities - Interest, ContentObject, and \
+                        objects corresponding to the major NDNx entities - Interest, ContentObject, and \
                         so on, as well as some support objects.  The C code is mostly just responsible \
                         for marshaling data back and forth between the formats, though there are some \
                         useful functions for key generation/access included.
@@ -47,7 +41,7 @@ pre-configure {
     configure.python        ${python.bin}
 }
 
-configure.args-append   --ccnx=${prefix}
+configure.args-append   --ndnx=${prefix}
 
 build.cmd               ./waf
 build.target            build
