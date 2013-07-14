@@ -6,11 +6,11 @@ PortGroup               python 1.0
 PortGroup               github 1.0
 
 github.setup            named-data PyCCN v0.3
-checksums               rmd160  9a14b55a30b6ab762dfb28035d468bfab116b765 \
-                        sha256  c17f9cb6aa1670f967e8190a3ebdc98e594429feb7f447b252c82f96a75d6676
+checksums               rmd160  60ac054e7def2c3993337b5f00863eb5a055d4f6 \
+                        sha256  99ad8bdf2f15e7eb601aa7b6465d6763a7a13ef9dcd957e9677636c6a6f3efcd
 
 name                    py-ndn
-homepage                https://github.com/named-data/py-ndn
+homepage                https://github.com/named-data/PyCCN
 license                 BSD
 version                 0.3
 
@@ -21,7 +21,7 @@ categories	            net ccnx python
 platforms	            darwin
 maintainers             ucla.edu:alexander.afanasyev
 
-description	            py-ndn - NDN bindings for Python
+description	            PyNDN (aka PyCCN) - NDN bindings for Python
 
 long_description        A "thin" implementation, which supports Python \
                         objects corresponding to the major NDNx entities - Interest, ContentObject, and \
@@ -41,7 +41,8 @@ pre-configure {
     configure.python        ${python.bin}
 }
 
-configure.args-append   --ndnx=${prefix}
+configure.args-append   --ndnx=${prefix} \
+                        --openssl=${prefix}
 
 build.cmd               ./waf
 build.target            build
