@@ -5,15 +5,15 @@ PortSystem          1.0
 PortGroup           github 1.0 
 PortGroup           python 1.0
 
-github.setup        remap ndnvideo a7cd19d43cee16e85fcfdb4ead15dcb7075b3eeb
-checksums           rmd160  d4ebdcb8c252a863c29058956bd5e13f17dd5e68 \
-                    sha256  8890d6eb24c720e40e45e6e2d4b446f41b40e1b6f4ff98fe908cba004e2c77d0
+github.setup        remap ndnvideo ee2df117eb386fd91ff343b11790b7e8b656e561
+checksums           rmd160  56c96068fed580776b4a0d93db706f58497b1568 \
+                    sha256  1810b2d1d6474517fa1e67e4dbc2ef244071b2e5d701937e3242ee0f9bbc3931
 
 name                py-ndnvideo
 homepage            https://github.com/remap/ndnvideo
 license             Unknown
 # version             
-revision            2
+revision            4
 
 python.versions         27
 python.default_version  27
@@ -31,7 +31,7 @@ use_configure       false
 
 if {$subport != $name} {
     depends_lib-append  port:ccnx \
-        port:py${python.version}-pyccn \
+        port:py${python.version}-ndn \
         port:py${python.version}-gst-python \
         port:gstreamer010-gst-ffmpeg \
         port:gstreamer010-gst-plugins-bad \
