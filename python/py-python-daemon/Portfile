@@ -1,0 +1,33 @@
+# $Id: Portfile 102139 2013-01-28 10:54:12Z jmr@macports.org $
+
+PortSystem          1.0
+PortGroup           python 1.0
+
+name                py-python-daemon
+set real_name       python-daemon
+version             1.6
+categories-append   devel
+platforms           darwin
+supported_archs     noarch
+license             PSF-2+
+maintainers         nomaintainer
+description         Library to implement a well-behaved Unix daemon process.
+long_description  \
+    This library implements the well-behaved daemon specification of PEP 3143, \
+    \"Standard daemon process library\". A well-behaved Unix daemon process is \
+    tricky to get right, but the required steps are much the same for every \
+    daemon program. A DaemonContext instance holds the behaviour and \
+    configured process environment for the program\; use the instance as a \
+    context manager to enter a daemon state.
+
+homepage            http://pypi.python.org/pypi/python-daemon/
+master_sites        http://pypi.python.org/packages/source/p/${real_name}
+distname            ${real_name}-${version}
+checksums           rmd160  cf269c6a40a08ff6265e3fb87b307da2d79470de \
+                    sha256  1665fb16bfeae72f16aa2de40bc75661458bd42731a7d463a911a8d5eaf96c0b
+
+python.versions     27
+
+if {$subport != $name} {
+    depends_build       port:py${python.version}-distribute
+}
