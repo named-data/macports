@@ -40,7 +40,7 @@ livecheck.regex         {LATEST-IS-(\d+(?:\.\d+)*)}
 if {$subport != $name} {
    depends_lib-append      port:glib2 \
                            port:py${python.version}-gobject \
-                           port:py${python.version}-gtk \
+                           port:py${python.version}-pygtk \
                            port:py${python.version}-numeric
    depends_build-append    port:pkgconfig
 }
