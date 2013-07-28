@@ -6,6 +6,7 @@ PortGroup           python 1.0
 name                py-python-daemon
 set real_name       python-daemon
 version             1.6
+revision            1
 categories-append   devel
 platforms           darwin
 supported_archs     noarch
@@ -29,5 +30,5 @@ checksums           rmd160  cf269c6a40a08ff6265e3fb87b307da2d79470de \
 python.versions     27
 
 if {$subport != $name} {
-    depends_build       port:py${python.version}-distribute
+    depends_build       port:py${python.version}-setuptools
 }
