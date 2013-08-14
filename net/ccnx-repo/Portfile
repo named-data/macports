@@ -9,48 +9,11 @@ license                 GPL-2+ LGPL-2.1+
 version                 0.7.0
 distfiles
 
-categories              net ccnx
+categories              net
 maintainers             ucla.edu:alexander.afanasyev
                         
 description             Meta port for repo of ccnx package
  
-depends_lib-append      port:ccnx
-                        
-set ccnxuser            ccnx
-set ccnxgroup           ccnx
+replaced_by             ndnx
 
-supported_archs         noarch
-use_configure           no
-
-build       { }
-destroot    { 
-    system "echo \"su - ${ccnxuser} -c 'CCNR_DIRECTORY=${prefix}/var/db/ccnx-repo ${prefix}/bin/ccnr'\"  > \"${destroot}${prefix}/bin/ccnr-wrapper\""
-    file attributes "${destroot}${prefix}/bin/ccnr-wrapper" -permissions 0755 
-}
-
-post-activate {
-    xinstall -d "${prefix}/var/db"
-    xinstall -d -o ${ccnxuser} -g ${ccnxgroup} "${prefix}/var/db/ccnx-repo"
-
-    file attributes "${prefix}/var/db/ccnx-repo" -owner ${ccnxuser} -group ${ccnxgroup}
-
-    touch "${prefix}/var/log/ccnx-repo.log"
-    file attributes "${prefix}/var/log/ccnx-repo.log" -owner ${ccnxuser} -group ${ccnxgroup}
-
-    if {![file exists ${prefix}/var/db/ccnx-repo/config]} {
-            touch "${prefix}/var/db/ccnx-repo/config"
-            file attributes "${prefix}/var/db/ccnx-repo/config" -owner ${ccnxuser} -group ${ccnxgroup}
-             
-            system "echo CCNR_DEBUG=WARNING >> \"${prefix}/var/db/ccnx-repo/config\""
-            system "echo CCNR_DIRECTORY=\"${prefix}/var/db/ccnx-repo\" >> \"${prefix}/var/db/ccnx-repo/config\""
-    }
-}
-
-startupitem.executable  "${prefix}/bin/ccnr-wrapper"
-
-startupitem.create      yes
-startupitem.name        ${name}
-
-startupitem.netchange   no
-startupitem.logevents   yes
-startupitem.logfile     ${prefix}/var/log/ccnx-repo.log
+PortGroup               obsolete 1.0
