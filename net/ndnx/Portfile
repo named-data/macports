@@ -1,0 +1,138 @@
+# -*- coding: utf-8; mode: tcl; tab-width: 4; indent-tabs-mode: nil; c-basic-offset: 4 -*- vim:fenc=utf-8:ft=tcl:et:sw=4:ts=4:sts=4
+# $Id$
+
+PortSystem              1.0
+PortGroup               github 1.0
+
+github.setup            named-data ndnx v0.1
+checksums               rmd160  c1aa95c70444e3f0f1b1943ee60c138f850dc78c \
+                        sha256  9d64a112883ec3389a576f0df4281babac9520181ece5e106478d71d895ab6d8
+
+name                    ndnx
+homepage                http://www.named-data.net
+license                 GPL-2+ LGPL-2.1+
+version                 0.1
+
+categories              net
+platforms               darwin
+maintainers             ucla.edu:alexander.afanasyev
+
+description             NDNx library and ndnd forwarding daemon
+
+long_description        NDNx library and ndnd forwarding daemon
+
+depends_lib-append      port:openssl \
+                        port:expat \
+                        port:libpcap \
+                        port:libxml2 \
+                        port:asciidoc
+
+set ndnxuser            ndnx
+set ndnxgroup           ndnx
+set ndnxdir             ${prefix}/etc/ndnx
+
+add_users               ${ndnxuser} shell=/bin/sh group=${ndnxgroup} \
+                        home=${ndnxdir} \
+                        realname=NDNx\ Account
+
+default_variants        +java +apps
+
+variant java description {Enable Java API build} {
+    configure.env-delete   BUILD_JAVA=false
+}
+
+variant apps requires java description {Enable build of reference applications} {
+    configure.env-delete   BUILD_APPS=false
+}
+
+post-patch {
+    reinplace   "s|\$HOME/.ndnx/|${ndnxdir}/|g" ${worksrcpath}/csrc/util/ndndstart.sh
+}
+
+configure.env-append    OPENSSL_CFLAGS=-I${prefix}/include \
+                        OPENSSL_LIBS=-L${prefix}/lib \
+                        INSTALL_BASE=${prefix} \
+                        INSTALL_MAN=${prefix}/share/man \
+                        BUILD_JAVA=false \
+                        BUILD_APPS=false \
+
+configure.cflags        -DNDNX_DIR=\\\"${ndnxdir}\\\" \
+                        -O2 -std=gnu99
+
+build.env-append        OPENSSL_CFLAGS=-I${prefix}/include \
+                        OPENSSL_LIBS=-L${prefix}/lib \
+                        INSTALL_BASE=${prefix} \
+
+
+post-destroot {
+    # Create a configuration directory, which also a home directory for ${ndnxuser}
+    xinstall -d -o ${ndnxuser} -g ${ndnxgroup} "${destroot}${ndnxdir}"
+
+    # Copy a sample ndnd.conf file
+    xinstall -o ${ndnxuser} -g ${ndnxgroup} \
+        ${worksrcpath}/csrc/libexec/ndnd.conf.sample \
+        ${destroot}${ndnxdir}/
+
+    # Create a sample ndndrc file
+    system "echo NDNR_GLOBAL_PREFIX=/ndn/keys > \"${destroot}${ndnxdir}/ndndrc.sample\""
+    system "echo NDND_LOG=${prefix}/var/log/ndnd.log >> \"${destroot}${ndnxdir}/ndndrc.sample\""
+    system "echo NDND_DEBUG=16 >> \"${destroot}${ndnxdir}/ndndrc.sample\""
+}
+
+post-activate {
+    # log file needs to be owned by ${ndnxuser}, otherwise ndnd will not be able to write to it
+    file mkdir "${prefix}/var/log"
+    touch "${prefix}/var/log/ndnd.log"
+    file attributes "${prefix}/var/log/ndnd.log" -owner ${ndnxuser} -group ${ndnxgroup}
+    file mkdir "${prefix}/var/run/ndnd"
+    file attributes "${prefix}/var/run/ndnd" -owner ${ndnxuser} -group ${ndnxgroup}
+
+    # Make sure initial conf files are present and setup correctly
+    foreach f { ndnd.conf ndndrc } {
+        if {![file exists ${ndnxdir}/${f}]} {
+            file copy ${ndnxdir}/${f}.sample \
+                ${ndnxdir}/${f}
+        }
+    }
+}
+
+startupitem.pidfile     none
+startupitem.start       "su ${ndnxuser} -c \"${prefix}/bin/ndndstart\" && sleep 5 && su ${ndnxuser} -c \"${prefix}/bin/ndnd-autoconfig -d ${prefix}/var/run/ndnd/autoconfig.pid &\""
+startupitem.stop        "su ${ndnxuser} -c \"kill `cat ${prefix}/var/run/ndnd/autoconfig.pid`\" ; su ${ndnxuser} -c \"${prefix}/bin/ndndstop\""
+startupitem.restart     "su ${ndnxuser} -c \"${prefix}/bin/ndndc -f ${ndnxdir}/ndnd.conf\" && su ${ndnxuser} -c \"${prefix}/bin/ndnd-autoconfig\""
+
+variant no_autoconf description {Disable automatic detection of local ndnx hub} {
+    startupitem.start       "su ${ndnxuser} -c \"${prefix}/bin/ndndstart\""
+    startupitem.restart     "su ${ndnxuser} -c \"${prefix}/bin/ndndc -f ${ndnxdir}/ndnd.conf\""
+}
+
+startupitem.create      yes
+startupitem.name        ${name}
+
+startupitem.netchange   yes
+startupitem.logevents   yes
+startupitem.logfile     ${prefix}/var/log/ndnx.log
+
+notes "
+
+You can add the following line into \"${ndnxdir}/ndndrc\" in order to automatically
+start ndnx repo for the /ndn/keys prefix:
+
+    NDNR_GLOBAL_PREFIX=/ndn/keys
+
+For more information and documentation, refer to man pages and http://www.ndnx.org website.
+
+If you have your public key signed by NDN testbed operators and you installed the certificate
+\(using ndn-install-pubcert command\), you can enable automatic configuration of the default
+route using your key.  To do so, you need to run the following commands once:
+
+  # extract public key from ndnx user
+  sudo HOME=${ndnxdir} ndn-extract-public-key > /tmp/ndnx.pem
+
+  # sign public key of the ndnx user
+  ndn-sign-key -i \"ndnx-autoconfig\" /tmp/ndnx.pem
+
+  # install certification of the public key
+  sudo HOME=${ndnxdir} ndn-install-pubcert /tmp/ndnx.pubcert
+
+"
