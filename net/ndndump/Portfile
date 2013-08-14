@@ -4,27 +4,34 @@
 PortSystem          1.0
 PortGroup           github 1.0
 
-github.setup        named-data ndndump 0.3
-checksums           rmd160  a9ea465429f2fb8421398349f79f850009264aaf \
-                    sha256  0aad19b8b9f0f915fd60bbc10c8ade387b86b28767385c35669d17e9fdb01a72
+github.setup        named-data ndndump v0.4
+checksums           rmd160  037d30e39a1b955496583aa000e32ec1d5c90e85 \
+                    sha256  bceac8e19c71a792f7788f16e79a46acf688aa6663ba1ff779c279091b278035
 
 name                ndndump
 homepage            https://github.com/named-data/ndndump
 license             GNU-3+
-revision            0
+version             0.4
 
-categories	        net ccnx
+categories	        net
 platforms	        darwin
 maintainers         ucla.edu:alexander.afanasyev
 
-description	        tcpdump for NDN
+description	        tcpdump for NDNx
 
 long_description    A simple tcpdump-like program that decodes and print out \
-                    ccnb-formatted packets (see www.ccnx.org).
+                    ndnb-formatted packets (see http://www.named-data.net).
 
-depends_lib-append  port:ccnx \
-                    port:boost \
+depends_lib-append  port:boost \
                     port:libpcap
 
-configure.args-append   --ccnx=${prefix} \
-                        --boost-includes=${prefix}/include --boost-libs=${prefix}/lib
+use_configure           yes
+
+configure.cmd           ./waf configure
+
+build.cmd               ./waf
+build.target            build
+
+destroot.cmd            ./waf
+destroot.target         install
+destroot.destdir        --destdir=${destroot}
