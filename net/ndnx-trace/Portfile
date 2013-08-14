@@ -1,0 +1,59 @@
+# -*- coding: utf-8; mode: tcl; tab-width: 4; indent-tabs-mode: nil; c-basic-offset: 4 -*- vim:fenc=utf-8:ft=tcl:et:sw=4:ts=4:sts=4
+# $Id$
+
+PortSystem          1.0
+PortGroup           github 1.0
+
+github.setup        cawka ndnx-trace v1.1.4
+checksums           rmd160  0bfd1c6637cdd67fba8dba20a7b77ccf187284cb \
+                    sha256  49e732a3648010387463dbfb367b40825d03a968866a82d4897b3a848c49590c
+
+name                ndnx-trace
+homepage            http://code.google.com/p/ccnx-trace/
+license             GPL-3+
+version             1.1.4
+
+categories          net
+platforms           darwin
+maintainers         ucla.edu:alexander.afanasyev
+
+description         traceroute-like functionality for NDNx
+
+long_description    The NDNx Trace is a tool with traceroute like functionality for NDNx. \
+                    The NDNx code can be obtained at http://www.ndnx.org. This tools is \
+                    written for troubleshooting problems in a network of ndnx nodes. This \
+                    tool can trace to a certain NDN URI, e.g, ndnx:/ndn/csu/netsec/index. \
+                    The tool displays all routes to the namespace and problems at each route, \
+                    if any. In this process, the tool bypasses the intermediate ndnx caches. 
+
+use_autoreconf      yes
+use_configure       yes
+depends_lib-append  port:ndnx
+
+configure.args-append  --with-ndnx=${prefix} \
+                       --with-openssl=${prefix}
+
+post-patch {
+    reinplace   "s|LOGFILE \"ndn_traced.log\"|LOGFILE \"${prefix}/var/log/ndn_traced.log\"|g" ${worksrcpath}/source/conf.h
+}
+
+post-destroot {
+    system "echo \"su - ndnx -c '${prefix}/bin/ndn_traced'\"  > \"${destroot}${prefix}/bin/ndn_traced-wrapper\""
+    file attributes "${destroot}${prefix}/bin/ndn_traced-wrapper" -permissions 0755
+}
+
+post-activate {
+    touch "${prefix}/var/log/ndn_traced.log"
+    file attributes "${prefix}/var/log/ndn_traced.log" -owner ndnx -group ndnx
+}
+
+startupitem.executable  "${prefix}/bin/ndn_traced-wrapper"
+
+startupitem.create      yes
+startupitem.name        ${name}
+
+startupitem.netchange   no
+
+startupitem.logevents   yes
+startupitem.logfile     ${prefix}/var/log/ndnx-trace-events.log
+
