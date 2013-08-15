@@ -1,0 +1,60 @@
+# -*- coding: utf-8; mode: tcl; tab-width: 4; indent-tabs-mode: nil; c-basic-offset: 4 -*- vim:fenc=utf-8:ft=tcl:et:sw=4:ts=4:sts=4
+# $Id$
+
+PortSystem              1.0
+PortGroup               github 1.0
+
+github.setup            cawka ndn-js 3861414c370cf28b405151fc7e2ab8c8bb56bcf3
+checksums               rmd160  dfc49370aff267ded7a46a8ef26f00c6950b4497 \
+                        sha256  b36d04f974b31895485d895aa44893e2d43f2d96f6443921903304fc6966f79d
+
+name                    ndnx-wsproxy
+homepage                http://github.com/named-data/ndn-js
+license                 Permissive BSD
+version                 0.1
+revision                3
+
+categories              net
+maintainers             ucla.edu:alexander.afanasyev
+
+description             WebSocket proxy server between NDN javascript stack and NDNx daemon
+
+depends_lib-append      port:ndnx \
+                        port:nodejs \
+                        port:npm
+
+set ndnxuser            ndnx
+
+supported_archs         noarch
+use_configure           yes
+
+configure.cmd           ./waf configure
+configure.args-append   --no-js
+
+build       { }
+
+destroot.cmd            ./waf
+destroot.destdir        --destdir=${destroot}
+
+post-destroot {
+    system "echo \"su ${ndnxuser} -c 'NODE_PATH=${prefix}/lib/node_modules ${prefix}/bin/node ${prefix}/bin/ndnx-wsproxy-tcp.js \\\$0'\"  > \"${destroot}${prefix}/bin/ndnx-wsproxy-tcp\""
+    file attributes "${destroot}${prefix}/bin/ndnx-wsproxy-tcp" -permissions 0755
+
+    system "echo \"su ${ndnxuser} -c 'NODE_PATH=${prefix}/lib/node_modules ${prefix}/bin/node ${prefix}/bin/ndnx-wsproxy-udp.js \\\$0'\"  > \"${destroot}${prefix}/bin/ndnx-wsproxy-udp\""
+    file attributes "${destroot}${prefix}/bin/ndnx-wsproxy-udp" -permissions 0755
+}
+
+post-activate {
+    # install ndnx-wsproxy dependencies using npm
+    system "${prefix}/bin/npm install -g ws"
+    system "${prefix}/bin/npm install -g node-getopt"
+}
+
+startupitem.executable  ${prefix}/bin/ndnx-wsproxy-udp -c 127.0.0.1 -m 40 -L 1
+
+startupitem.create      yes
+startupitem.name        ${name}
+
+startupitem.netchange   no
+startupitem.logevents   yes
+startupitem.logfile     ${prefix}/var/log/ndnx-wsproxy.log
