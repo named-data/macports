@@ -1,0 +1,19 @@
+diff --git ndnpingserver-wrapper ndnpingserver-wrapper
+new file mode 100755
+index 0000000..c0993c8
+--- /dev/null
++++ ndnpingserver-wrapper
+@@ -0,0 +1,13 @@
++#!/bin/sh
++
++# This script should be installed in the same place as ndnd, ndndc, ndndsmoketest, ...
++# adjust the path to get consistency.
++D=`dirname "$0"`
++export PATH="$D:$PATH"
++
++if [ ! -f "$D/../etc/ndnx/ndnpingserver.conf" ]; then
++	sleep 100
++else
++	su - ndnx -c "$D/ndnpingserver `cat $D/../etc/ndnx/ndnpingserver.conf | xargs`"
++fi
++
