@@ -1,0 +1,28 @@
+# -*- coding: utf-8; mode: tcl; tab-width: 4; indent-tabs-mode: nil; c-basic-offset: 4 -*- vim:fenc=utf-8:ft=tcl:et:sw=4:ts=4:sts=4
+# $Id$
+
+PortSystem          1.0
+PortGroup           github 1.0
+
+github.setup        cawka graffle2pdf graffle2pdf-0.6
+checksums           rmd160  65cb224e8f339cd0a9385a6ec16bed2e4e6cccf0 \
+                    sha256  b8d0f31ba885e0e176584458d7737ba32f6010557c070d0b515f9b646efa1022
+
+name                graffle2pdf
+homepage            https://github.com/cawka/graffle2pdf
+version             0.6
+
+categories          graphics
+platforms           darwin
+maintainers         ucla.edu:alexander.afanasyev
+
+description         Command-line utility for exporting OmniGraffle documents
+
+use_configure       false
+
+build {
+}
+
+destroot {
+    xinstall -W ${worksrcpath} graffle2pdf ${destroot}${prefix}/bin/
+}
