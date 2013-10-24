@@ -4,15 +4,15 @@
 PortSystem              1.0
 PortGroup               github 1.0
 
-github.setup            named-data ndnx v0.1
-checksums               rmd160  f1ea60dedbca60cb80b6f7f054b47a9ed3ac8827 \
-                        sha256  2a76b4c6d58173a209cb178e922f2c1c2d690cfa0b998ce567fd25bf5ee927c8
+github.setup            named-data ndnx 25ad5ea4a2b445ce2f98809dd77ba9a5ce46ea84
+checksums               rmd160  2029a4e57625c372fac9ba50574c5d1fd72c709c \
+                        sha256  351605a6b4e7a25ddce052f20e16fa9607ec8208d8af570cf8c7eab65f6bee04
 
 name                    ndnx
 homepage                http://www.named-data.net
 license                 GPL-2+ LGPL-2.1+
-version                 0.1
-revision                1
+version                 0.2-git-25ad5
+revision                0
 
 categories              net
 platforms               darwin
