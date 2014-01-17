@@ -5,8 +5,8 @@ PortSystem              1.0
 PortGroup               github 1.0
 
 github.setup            named-data ndnx cdd3afd7a192b3d1fe8a223505f0c551869bb655
-checksums               rmd160  2029a4e57625c372fac9ba50574c5d1fd72c709c \
-                        sha256  351605a6b4e7a25ddce052f20e16fa9607ec8208d8af570cf8c7eab65f6bee04
+checksums               rmd160  4e8323ac71252a350999fa22956ec169e4b47401 \
+                        sha256  079aae0cccbc80ad7582d73eff419054803aac5b62f9d5d494164b19314f8366
 
 name                    ndnx
 homepage                http://www.named-data.net
@@ -45,8 +45,7 @@ configure.env-append    OPENSSL_CFLAGS=-I${prefix}/include \
                         BUILD_JAVA=false \
                         BUILD_APPS=false \
 
-configure.cflags        -DNDNX_DIR=\\\"${ndnxdir}\\\" \
-                        -O2 -std=gnu99
+configure.cflags        -O2 -std=gnu99
 
 build.env-append        OPENSSL_CFLAGS=-I${prefix}/include \
                         OPENSSL_LIBS=-L${prefix}/lib \
@@ -55,7 +54,7 @@ build.env-append        OPENSSL_CFLAGS=-I${prefix}/include \
 
 notes "
 
-You can add the following line into \"${ndnxdir}/ndndrc\" in order to automatically
+You can add the following line into \"~/.ndnx/ndndrc\" in order to automatically
 start ndnx repo for the /ndn/keys prefix:
 
     NDNR_GLOBAL_PREFIX=/ndn/keys
