@@ -2,56 +2,18 @@
 # $Id$
 
 PortSystem          1.0
-PortGroup           github 1.0
-
-github.setup        NDN-Routing ccnping 071f07b409c62dc1cf0de4e2eb2d214ea76bb624
-checksums           rmd160  8c7071eba0e93da07f71f0dda7b0a538a7cbd078 \
-                    sha256  b7c9ce05a990b7ef8411e43fcc60cf861a8da1e9d55e0bcc1ef557103cf2f4a6
 
 name                ccnping
 homepage            https://github.com/NDN-Routing/ccnping
 license             GPL-2+
 version             0.1
-revision            1
 
 categories          net ccnx
-platforms           darwin
 maintainers         ucla.edu:alexander.afanasyev
 
 description         ping command equivalent for CCNx
 
 long_description    ccnpingserver and ccnping are CCNx applications used for testing connectivity 
 
-use_configure       false
-depends_lib-append  port:ccnx
-
-# User should be already created by ccnx port
-set ccnxuser        ccnx
-set ccnxgroup       ccnx
-set ccnxdir         ${prefix}/etc/ccnx
-
-build.env-append    CFLAGS=-I${prefix}/include \
-                    LIBS=-L${prefix}/lib \
-                    INSTALL_BASE=${prefix} \
-                    CC=${configure.cc}
-
-destroot {
-    system "echo /ndn/`hostname` > ${ccnxdir}/ccnpingserver.conf.example"
-    xinstall -W ${worksrcpath} ccnping ccnpingserver ccnpingserver-wrapper ${destroot}${prefix}/bin/
-}
-
-patchfiles          patch-Makefile.diff \
-                    patch-wrapper.diff
-
-notes "
-ccnpingserver needs a local prefix to be configured in ${ccnxdir}/ccnpingserver.conf
-configuration file.  This file should contain just one line with local prefix, for example: /ndn/ucla.edu
-"
-
-startupitem.executable  "${prefix}/bin/ccnpingserver-wrapper"
-
-startupitem.create      yes
-startupitem.name        ${name}
-
-startupitem.netchange   no
-startupitem.logevents   no
+replaced_by         ndnping
+PortGroup           obsolete 1.0
