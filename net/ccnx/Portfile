@@ -2,20 +2,13 @@
 # $Id$
 
 PortSystem              1.0
-PortGroup               github 1.0
-
-github.setup            named-data ccnx ccnx-0.7.2-ndn-1
-checksums               rmd160  0e1bc288f326f99a8a28d189cb51c1a4c278ae98 \
-                        sha256  0b6b0a6ef64d3762053a77f75bb4dafb289339a6468ab3c24964c3ad2d9cf19c
 
 name                    ccnx
 homepage                http://www.ccnx.org/
 license                 GPL-2+ LGPL-2.1+
 version                 0.7.2.ndn.1
-epoch                   4
 
 categories              net
-platforms               darwin
 maintainers             ucla.edu:alexander.afanasyev
 
 description             ProjectCCNx implementation of Content Centric Networking (CCN) / \
@@ -30,118 +23,5 @@ long_description        Project CCNx(r) exists to develop, promote, and evaluate
                         research, and building applications with this technology, all \
                         contributing to its evolution.
 
-depends_lib-append      port:openssl \
-                        port:expat \
-                        port:libpcap \
-                        port:libxml2 \
-                        port:asciidoc
-
-set ccnxuser            ccnx
-set ccnxgroup           ccnx
-set ccnxdir             ${prefix}/etc/ccnx
-
-add_users               ${ccnxuser} shell=/bin/sh group=${ccnxgroup} \
-                        home=${ccnxdir} \
-                        realname=CCNx\ Account
-
-default_variants        +java +apps
-
-variant java description {Enable Java API build} {
-    configure.env-delete   BUILD_JAVA=false
-}
-
-variant apps requires java description {Enable build of reference applications} {
-    configure.env-delete   BUILD_APPS=false
-}
-
-post-patch {
-    reinplace   "s|\$HOME/.ccnx/|${ccnxdir}/|g" ${worksrcpath}/csrc/util/ccndstart.sh
-}
-
-configure.env-append    OPENSSL_CFLAGS=-I${prefix}/include \
-                        OPENSSL_LIBS=-L${prefix}/lib \
-                        INSTALL_BASE=${prefix} \
-                        INSTALL_MAN=${prefix}/share/man \
-                        BUILD_JAVA=false \
-                        BUILD_APPS=false \
-
-configure.cflags        -DCCNX_DIR=\\\"${ccnxdir}\\\" \
-                        -O2 -std=gnu99
-
-build.env-append        OPENSSL_CFLAGS=-I${prefix}/include \
-                        OPENSSL_LIBS=-L${prefix}/lib \
-                        INSTALL_BASE=${prefix} \
-
-
-post-destroot {
-    # Create a configuration directory, which also a home directory for ${ccnxuser}
-    xinstall -d -o ${ccnxuser} -g ${ccnxgroup} "${destroot}${ccnxdir}"
-
-    # Copy a sample ccnd.conf file
-    xinstall -o ${ccnxuser} -g ${ccnxgroup} \
-        ${worksrcpath}/csrc/libexec/ccnd.conf.sample \
-        ${destroot}${ccnxdir}/
-
-    # Create a sample ccndrc file
-    system "echo CCNR_GLOBAL_PREFIX=/ndn/keys > \"${destroot}${ccnxdir}/ccndrc.sample\""
-    system "echo CCND_LOG=${prefix}/var/log/ccnd.log >> \"${destroot}${ccnxdir}/ccndrc.sample\""
-    system "echo CCND_DEBUG=16 >> \"${destroot}${ccnxdir}/ccndrc.sample\""
-}
-
-post-activate {
-    # log file needs to be owned by ${ccnxuser}, otherwise ccnd will not be able to write to it
-    file mkdir "${prefix}/var/log"
-    touch "${prefix}/var/log/ccnd.log"
-    file attributes "${prefix}/var/log/ccnd.log" -owner ${ccnxuser} -group ${ccnxgroup}
-    file mkdir "${prefix}/var/run/ccnd"
-    file attributes "${prefix}/var/run/ccnd" -owner ${ccnxuser} -group ${ccnxgroup}
-
-    # Make sure initial conf files are present and setup correctly
-    foreach f { ccnd.conf ccndrc } {
-        if {![file exists ${ccnxdir}/${f}]} {
-            file copy ${ccnxdir}/${f}.sample \
-                ${ccnxdir}/${f}
-        }
-    }
-}
-
-startupitem.pidfile     none
-startupitem.start       "su ${ccnxuser} -c \"${prefix}/bin/ccndstart\" && sleep 5 && su ${ccnxuser} -c \"${prefix}/bin/ccnd-autoconfig -d ${prefix}/var/run/ccnd/autoconfig.pid &\""
-startupitem.stop        "su ${ccnxuser} -c \"kill `cat ${prefix}/var/run/ccnd/autoconfig.pid`\" ; su ${ccnxuser} -c \"${prefix}/bin/ccndstop\""
-startupitem.restart     "su ${ccnxuser} -c \"${prefix}/bin/ccndc -f ${ccnxdir}/ccnd.conf\" && su ${ccnxuser} -c \"${prefix}/bin/ccnd-autoconfig\""
-
-variant no_autoconf description {Disable automatic detection of local ccnx hub} {
-    startupitem.start       "su ${ccnxuser} -c \"${prefix}/bin/ccndstart\""
-    startupitem.restart     "su ${ccnxuser} -c \"${prefix}/bin/ccndc -f ${ccnxdir}/ccnd.conf\""
-}
-
-startupitem.create      yes
-startupitem.name        ${name}
-
-startupitem.netchange   yes
-startupitem.logevents   yes
-startupitem.logfile     ${prefix}/var/log/ccnx.log
-
-notes "
-
-You can add the following line into \"${ccnxdir}/ccndrc\" in order to automatically
-start ccnx repo for the /ndn/keys prefix:
-
-    CCNR_GLOBAL_PREFIX=/ndn/keys
-
-For more information and documentation, refer to man pages and http://www.ccnx.org website.
-
-If you have your public key signed by NDN testbed operators and you installed the certificate
-\(using ndn-install-pubcert command\), you can enable automatic configuration of the default
-route using your key.  To do so, you need to run the following commands once:
-
-  # extract public key from ccnx user
-  sudo HOME=${ccnxdir} ndn-extract-public-key > /tmp/ccnx.pem
-
-  # sign public key of the ccnx user
-  ndn-sign-key -i \"ccnx-autoconfig\" /tmp/ccnx.pem
-
-  # install certification of the public key
-  sudo HOME=${ccnxdir} ndn-install-pubcert /tmp/ccnx.pubcert
-
-"
+replaced_by             ndnx
+PortGroup               obsolete 1.0
