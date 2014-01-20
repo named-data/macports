@@ -1,0 +1,33 @@
+# -*- coding: utf-8; mode: tcl; tab-width: 4; indent-tabs-mode: nil; c-basic-offset: 4 -*- vim:fenc=utf-8:ft=tcl:et:sw=4:ts=4:sts=4
+# $Id$
+
+PortSystem          1.0
+PortGroup           github 1.0
+
+github.setup        cawka ndn-cpp 06e9d25a99ad2de2f56f0063b520acb9bec248ef
+checksums           rmd160  8742e4d3cdbaf5730eb9f36016cf4162bf4b03a1 \
+                    sha256  b1ace828859e20cbf5a342f854f31f0f42248e14cc0439f31c8934d30ac92a1f
+
+name                ndn-cpp-dev
+homepage            https://github.com/cawka/ndn-cpp
+license             BSD
+version             0.2.1
+
+categories          net
+platforms           darwin
+maintainers         ucla.edu:alexander.afanasyev
+
+description         C++ development library for NDN
+
+long_description    C++ development library for NDN.
+
+use_autoreconf      yes
+use_configure       yes
+
+depends_lib-append  port:boost \
+                    port:openssl \
+                    port:libcryptopp \
+                    port:sqlite3
+
+configure.args-append   --without-c++11 \
+                        --with-system-boost
