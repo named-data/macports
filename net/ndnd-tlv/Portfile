@@ -1,0 +1,40 @@
+# -*- coding: utf-8; mode: tcl; tab-width: 4; indent-tabs-mode: nil; c-basic-offset: 4 -*- vim:fenc=utf-8:ft=tcl:et:sw=4:ts=4:sts=4
+# $Id$
+
+PortSystem              1.0
+PortGroup               github 1.0
+
+github.setup            cawka ndnd-tlv 0e9b137f37e7aed6273ebaa0eb3f7c381bd55690
+checksums               rmd160  4d4f6bf31b2265c1e28dfb993d62eb8a5a8b5767 \
+                        sha256  b4da454a8d2f8132c58a8a370f816e15fe0364504c0d993765782b47a5eae806
+
+name                    ndnd-tlv
+homepage                https://github.com/cawka/ndnd-tlv
+license                 BSD
+version                 0.3-dev-0e9b1
+
+categories	            net
+platforms	            darwin
+maintainers             ucla.edu:alexander.afanasyev
+
+description	            NDN forwarding daemon with TLV support.
+
+long_description        NDN forwarding daemon with TLV support.
+
+depends_lib-append	    port:ndn-cpp-dev \
+                        port:ndnx \
+                        port:openssl
+
+use_configure           yes
+
+configure.cmd           ./waf configure
+
+configure.args-append   --ndnx=${prefix} \
+                        --openssl=${prefix}
+
+build.cmd               ./waf
+build.target            build
+
+destroot.cmd            ./waf
+destroot.target         install
+destroot.destdir        --destdir=${destroot}
