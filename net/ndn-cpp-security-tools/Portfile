@@ -1,0 +1,39 @@
+# -*- coding: utf-8; mode: tcl; tab-width: 4; indent-tabs-mode: nil; c-basic-offset: 4 -*- vim:fenc=utf-8:ft=tcl:et:sw=4:ts=4:sts=4
+# $Id$
+
+PortSystem              1.0
+PortGroup               github 1.0
+
+github.setup            cawka ndn-cpp-security-tools 9daf9d66f3865a0fc69ace51b4fecadfe1732796
+checksums               rmd160  bc607e1030cb78f9b11ce545935f4bc4ad902d20 \
+                        sha256  dce83f8886ab44f4168488ced2b4c63b2962badcd5499985e7e6250e2b1f60c9
+
+name                    ndn-cpp-security-tools
+homepage                https://github.com/cawka/ndn-cpp-security-tools
+license                 BSD
+version                 0.1
+
+categories              net
+platforms               darwin
+maintainers             ucla.edu:alexander.afanasyev
+
+description             NDNx security tools.
+
+long_description        NDNx security tools with TLV support.
+
+depends_lib-append      port:ndn-cpp-dev \
+                        port:boost \
+                        port:libcryptopp
+
+depends_build-append    port:pkgconfig
+
+use_configure           yes
+
+configure.cmd           ./waf configure
+
+build.cmd               ./waf
+build.target            build
+
+destroot.cmd            ./waf
+destroot.target         install
+destroot.destdir        --destdir=${destroot}
