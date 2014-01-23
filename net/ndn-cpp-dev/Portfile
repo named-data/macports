@@ -4,14 +4,15 @@
 PortSystem          1.0
 PortGroup           github 1.0
 
-github.setup        cawka ndn-cpp afc45a96221fbabd9e2e4d753b4a126a8e417da0
-checksums           rmd160  df0c487edbdd2e134a43dafcc67793bf3fc67b07 \
-                    sha256  c6cd4ac6ca413f9cebf0f1653b4eb069ac37b3c7a76bc7f8e8da232dd68f1ba4
+github.setup        cawka ndn-cpp 874678fed75f5ad10e9c1669d62db29c9ef56feb
+checksums           rmd160  23b1a0a2f873de45eab308b315e64728e87e69d8 \
+                    sha256  d4dd356b1664bcbead1141a4539109610c8585bb479b93e0cc40a7df9be76565
 
 name                ndn-cpp-dev
 homepage            https://github.com/cawka/ndn-cpp
 license             BSD
 version             0.2.2
+revision            1
 
 categories          net
 platforms           darwin
