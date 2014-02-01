@@ -4,15 +4,14 @@
 PortSystem          1.0
 PortGroup           github 1.0
 
-github.setup        cawka ndn-cpp 874678fed75f5ad10e9c1669d62db29c9ef56feb
-checksums           rmd160  23b1a0a2f873de45eab308b315e64728e87e69d8 \
-                    sha256  d4dd356b1664bcbead1141a4539109610c8585bb479b93e0cc40a7df9be76565
+github.setup        cawka ndn-cpp 196b9aa83eeefcfecf0f4a8baa47983001ae3829
+checksums           rmd160  be9fac56ba15a37a78b75475b3c79ef337538d5b \
+                    sha256  dec60fd99ac4d547156e0da2b670065a764a8cefbb941d8790133340249ef438
 
 name                ndn-cpp-dev
 homepage            https://github.com/cawka/ndn-cpp
 license             BSD
-version             0.2.2
-revision            1
+version             0.2.3-rc1
 
 categories          net
 platforms           darwin
@@ -22,13 +21,20 @@ description         C++ development library for NDN
 
 long_description    C++ development library for NDN.
 
-use_autoreconf      yes
-use_configure       yes
-
 depends_lib-append  port:boost \
                     port:openssl \
                     port:libcryptopp \
                     port:sqlite3
 
-configure.args-append   --without-c++11 \
-                        --with-system-boost
+depends_build-append    port:pkgconfig
+
+use_configure           yes
+
+configure.cmd           ./waf configure
+
+build.cmd               ./waf
+build.target            build
+
+destroot.cmd            ./waf
+destroot.target         install
+destroot.destdir        --destdir=${destroot}
