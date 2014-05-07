@@ -1,0 +1,4 @@
+#!/bin/sh
+
+sudo launchctl load -w /Library/LaunchDaemons/net.named-data.nfd.plist
+sudo launchctl load -w /Library/LaunchDaemons/net.named-data.nrd.plist

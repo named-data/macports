@@ -1,0 +1,43 @@
+# -*- coding: utf-8; mode: tcl; tab-width: 4; indent-tabs-mode: nil; c-basic-offset: 4 -*- vim:fenc=utf-8:ft=tcl:et:sw=4:ts=4:sts=4
+# $Id$
+
+PortSystem          1.0
+PortGroup           github 1.0
+
+github.setup        named-data ndn-cxx ndn-cxx-0.1.0-rc1
+checksums           rmd160  630723ee5f1cac30eca5a5eb0a93b063b869afc9 \
+                    sha256  80db2472aad0f6852e542e34f509da72f759218997fd3df04a998eb4c1cbb299
+
+name                ndn-cxx
+homepage            http://named-data.net/doc/ndn-cxx/
+license             BSD
+version             0.1.0-rc1
+
+categories          net
+platforms           darwin
+maintainers         ucla.edu:alexander.afanasyev
+
+description         NDN C++ library with eXperimental eXtensions
+
+long_description    ndn-cxx is a C++ library, implementing Named Data Networking (NDN) primitives \
+                    that can be used to implement various NDN applications
+
+depends_lib-append  port:boost \
+                    port:openssl \
+                    port:libcryptopp \
+                    port:sqlite3
+
+depends_build-append    port:pkgconfig \
+                        port:py27-sphinx
+
+use_configure           yes
+
+configure.env-append    SPHINX_BUILD=${prefix}/bin/sphinx-build-2.7
+configure.cmd           ./waf configure
+
+build.cmd           ./waf
+build.target        build
+
+destroot.cmd        ./waf
+destroot.target     install
+destroot.destdir    --destdir=${destroot}

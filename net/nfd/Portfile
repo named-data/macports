@@ -1,0 +1,136 @@
+# -*- coding: utf-8; mode: tcl; tab-width: 4; indent-tabs-mode: nil; c-basic-offset: 4 -*- vim:fenc=utf-8:ft=tcl:et:sw=4:ts=4:sts=4
+# $Id$
+
+PortSystem          1.0
+PortGroup           github 1.0
+
+github.setup        named-data NFD b47d53842a6ea8d32800459270a667952d4079bf
+checksums           rmd160  b4c9d6217791642ee6438172be07356554ab2efd \
+                    sha256  8c40c6e96266e064455c2ca6b0b87eedd2bfed10511edcba9940facb6131802a
+
+name                nfd
+homepage            http://named-data.net/doc/NFD/
+license             GPL3+
+version             0.1.0-rc1.1
+
+categories          net
+platforms           darwin
+maintainers         ucla.edu:alexander.afanasyev
+
+description         Named Data Networking Forwarding Daemon
+
+long_description \
+    NFD is a network forwarder that implements and evolves together with the \
+    Named Data Networking (NDN) protocol.  The main design goal of NFD is \
+    to support diverse experimentation of NDN technology.                 \
+    The design emphasizes modularity and extensibility to allow easy      \
+    experiments with new protocol features, algorithms, new               \
+    applications. We have not fully optimized the code for                \
+    performance. The intention is that performance optimizations are one  \
+    type of experiments that developers can conduct by trying out         \
+    different data structures and different algorithms\; over time, better \
+    implementations may emerge within the same design framework.
+
+depends_lib-append  port:ndn-cxx \
+                    port:libpcap
+
+depends_build-append    port:pkgconfig \
+                        port:py27-sphinx
+
+use_configure           yes
+
+configure.env-append    SPHINX_BUILD=${prefix}/bin/sphinx-build-2.7
+configure.cmd           ./waf configure
+
+build.cmd           ./waf
+build.target        build
+
+destroot.cmd        ./waf
+destroot.target     install
+destroot.destdir    --destdir=${destroot}
+
+set ndn_user        ndn
+set ndn_group       ndn
+
+add_users ${ndn_user} shell=/bin/sh group=${ndn_group} \
+    realname=NDN\ User
+
+post-destroot {
+    # Install plists
+    xinstall -m 755 -d ${destroot}${prefix}/etc/LaunchDaemons/net.named-data.nfd/
+    xinstall -m 755 ${filespath}/net.named-data.nfd.plist \
+        ${destroot}${prefix}/etc/LaunchDaemons/net.named-data.nfd/
+    xinstall -m 755 ${filespath}/net.named-data.nrd.plist \
+        ${destroot}${prefix}/etc/LaunchDaemons/net.named-data.nfd/
+
+    reinplace "s|/usr/local|${prefix}|g" \
+        ${destroot}${prefix}/etc/LaunchDaemons/net.named-data.nfd/net.named-data.nfd.plist
+    reinplace "s|/usr/local|${prefix}|g" \
+        ${destroot}${prefix}/etc/LaunchDaemons/net.named-data.nfd/net.named-data.nrd.plist
+
+    # Install replacement for nfd-start/stop scripts
+    xinstall -m 755 ${filespath}/nfd-start "${destroot}${prefix}/bin/"
+    xinstall -m 755 ${filespath}/nfd-stop "${destroot}${prefix}/bin/"
+}
+
+post-activate {
+
+    # Create log dir
+    xinstall -m 755 -d -o ${ndn_user} -g ${ndn_group} \
+        ${prefix}/var/log/ndn
+
+    system "cd /Library/LaunchDaemons && sudo ln -sf \
+            ${prefix}/etc/LaunchDaemons/net.named-data.nfd/net.named-data.nfd.plist"
+    system "cd /Library/LaunchDaemons && sudo ln -sf \
+            ${prefix}/etc/LaunchDaemons/net.named-data.nfd/net.named-data.nrd.plist"
+
+    if {![file exists ${prefix}/etc/ndn/nfd.conf]} {
+
+        file copy ${prefix}/etc/ndn/nfd.conf.sample \
+            ${prefix}/etc/ndn/nfd.conf
+
+        # Generate self-signed NDN certificate for nfd (owned by root)
+        xinstall -m 755 -d ${prefix}/var/lib/ndn/nfd/.ndn
+        system "echo tpm=file > ${prefix}/var/lib/ndn/nfd/.ndn/client.conf"
+        system "HOME=${prefix}/var/lib/ndn/nfd ndnsec-keygen /localhost/daemons/nfd | \
+          HOME=${prefix}/var/lib/ndn/nfd ndnsec-install-cert -"
+
+        # Generate self-signed NDN certificate for nrd (owned by ndn)
+        xinstall -m 755 -d -o ${ndn_user} -g ${ndn_group} ${prefix}/var/lib/ndn/nrd/.ndn
+        system "sudo -u ${ndn_user} -g ${ndn_group} sh -c 'echo tpm=file \
+          > ${prefix}/var/lib/ndn/nrd/.ndn/client.conf'"
+        system "sudo -u ${ndn_user} -g ${ndn_group} HOME=${prefix}/var/lib/ndn/nrd \
+          ndnsec-keygen /localhost/daemons/nrd | \
+          sudo -u ${ndn_user} -g ndn HOME=${prefix}/var/lib/ndn/nrd ndnsec-install-cert -"
+
+        # Dump RIB Management daemon's certificate
+        xinstall -m 755 -d ${prefix}/etc/ndn/certs
+        system "sudo sh -c 'sudo -u ${ndn_user} -g ${ndn_group} HOME=${prefix}/var/lib/ndn/nrd \
+          ndnsec-dump-certificate -i /localhost/daemons/nrd \
+          > ${prefix}/etc/ndn/certs/localhost_daemons_nrd.ndncert'"
+
+    }
+}
+
+pre-deactivate {
+    system "${prefix}/bin/nfd-stop"
+
+    system "rm ${prefix}/etc/LaunchDaemons/net.named-data.nfd/net.named-data.nfd.plist"
+    system "rm ${prefix}/etc/LaunchDaemons/net.named-data.nfd/net.named-data.nrd.plist"
+}
+
+notes "
+
+To start NFD and ensure it is started when system boots:
+
+    nfd-start
+
+To stop NFD and disable auto-start when system boots:
+
+    nfd-stop
+
+NFD log files are located in ${prefix}/var/log/ndn/
+
+Configuration file is in ${prefix}/var/etc/ndn/
+
+"
