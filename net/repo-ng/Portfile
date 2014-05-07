@@ -1,0 +1,40 @@
+# -*- coding: utf-8; mode: tcl; tab-width: 4; indent-tabs-mode: nil; c-basic-offset: 4 -*- vim:fenc=utf-8:ft=tcl:et:sw=4:ts=4:sts=4
+# $Id$
+
+PortSystem          1.0
+PortGroup           github 1.0
+
+github.setup        named-data repo-ng ca32918106c25a7b39ae1d5636aac8377c1d33ca
+checksums           rmd160  bab134f077eaf8eec479054655f72125d584de93 \
+                    sha256  bb0680ce2e2892ba035872160bf8af94b412b22eed8c06a47f3abd16e57dfa51
+
+name                repo-ng
+homepage            https://github.com/named-data/repo-ng
+license             GPL-3+
+version             0.0.1
+
+categories          net
+platforms           darwin
+maintainers         ucla.edu:alexander.afanasyev
+
+description         Next generation of NDN repository
+
+long_description    repo-ng is an implementation of a Named Data Networking data repository. \
+                    The repo-ng follows Repo protocol of NDN. The specification of repo protocol \
+                    is: http://redmine.named-data.net/projects/repo-ng/wiki
+
+depends_lib-append  port:ndn-cxx \
+                    port:sqlite3
+
+depends_build-append    port:pkgconfig
+
+use_configure       yes
+
+configure.cmd       ./waf configure
+
+build.cmd           ./waf
+build.target        build
+
+destroot.cmd        ./waf
+destroot.target     install
+destroot.destdir    --destdir=${destroot}
