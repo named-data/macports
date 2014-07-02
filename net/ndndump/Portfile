@@ -1,0 +1,36 @@
+# -*- coding: utf-8; mode: tcl; tab-width: 4; indent-tabs-mode: nil; c-basic-offset: 4 -*- vim:fenc=utf-8:ft=tcl:et:sw=4:ts=4:sts=4
+# $Id$
+
+PortSystem          1.0
+PortGroup           github 1.0
+
+github.setup        named-data ndndump 22f77ef777d7201b3677b04e6b1e0e85c45f0238
+checksums           rmd160  cee800102434375b1a8e8b3eab1ec8b734e6e4d7 \
+                    sha256  b533164a935a936f52feaa84b01d163647159699f9f30b62fa91878682691dbd
+
+name                ndndump
+homepage            https://github.com/named-data/ndndump
+version             0.0.0
+license             GPL3+
+
+categories          net
+platforms           darwin
+maintainers         ucla.edu:alexander.afanasyev
+
+description         Packet capture and analysis tool for NDN
+
+depends_lib-append  port:ndn-cxx \
+                    port:libpcap
+
+depends_build-append    port:pkgconfig
+
+use_configure       yes
+
+configure.cmd       ./waf configure
+
+build.cmd           ./waf
+build.target        build
+
+destroot.cmd        ./waf
+destroot.target     install
+destroot.destdir    --destdir=${destroot}
