@@ -4,13 +4,13 @@
 PortSystem          1.0
 PortGroup           github 1.0
 
-github.setup        named-data ndn-tlv-ping ndn-tlv-ping-0.1.0
-checksums           rmd160  b81cbc32a1ef2959428f0013ef2b38add95a6b3a \
-                    sha256  d3b201f7f76c13403b5169dac35da9a15b849b0b1ed8b456a2efb23f87bddffd
+github.setup        named-data ndn-tlv-ping 2e567f902b58e0ad260ea6b8d6ae66b050291a2f
+checksums           rmd160  520112b0470139626c91c660a0e6f3871a4ec20b \
+                    sha256  75d8a978960eb4857cff34d2d8ef73f3ec4689642746a1992803e73e68f48771
 
 name                ndnping
 homepage            https://github.com/named-data/ndn-tlv-ping
-version             0.1.0
+version             0.1.1
 license             GPL3+
 epoch               1
 
