@@ -4,14 +4,14 @@
 PortSystem          1.0
 PortGroup           github 1.0
 
-github.setup        named-data repo-ng ca32918106c25a7b39ae1d5636aac8377c1d33ca
-checksums           rmd160  bab134f077eaf8eec479054655f72125d584de93 \
-                    sha256  bb0680ce2e2892ba035872160bf8af94b412b22eed8c06a47f3abd16e57dfa51
+github.setup        named-data repo-ng 91fb4f2e5067d2fd6a591d885353a449bc65b399
+checksums           rmd160  766929a4d29607fe9774761773fc09bbd1a100be \
+                    sha256  89a67ee7c415420cb557645cfd60822e6a47eca9da961a8ecfac384e3367723a
 
 name                repo-ng
 homepage            https://github.com/named-data/repo-ng
 license             GPL-3+
-version             0.0.1
+version             0.0.2
 
 categories          net
 platforms           darwin
