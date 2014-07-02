@@ -4,14 +4,14 @@
 PortSystem          1.0
 PortGroup           github 1.0
 
-github.setup        named-data NFD NFD-0.1.0
-checksums           rmd160  857094f20a6444301fd1741e4a20f04bad048787 \
-                    sha256  b90701bf6300f007ac3690451ab619ba61bdbcb56329390ba14675ac3c4b21d1
+github.setup        named-data NFD NFD-0.2.0-rc1
+checksums           rmd160  3395d7189952ad9f2d0dbcec0218cb4444fa73f4 \
+                    sha256  6748eae9643624f63070c557952e5ed04df0f3f019815690c421ebefcc12362a
 
 name                nfd
 homepage            http://named-data.net/doc/NFD/
 license             GPL3+
-version             0.1.0
+version             0.2.0-rc1
 epoch               1
 
 categories          net
@@ -39,6 +39,12 @@ depends_build-append    port:pkgconfig \
                         port:py27-sphinx
 
 use_configure           yes
+
+pre-configure {
+    system "cd ${worksrcpath} && \
+            curl -L https://github.com/zaphoyd/websocketpp/tarball/65cc3765a892ee5928160ba478178e747233aa6c > websocket.tar.gz && \
+            tar zxf websocket.tar.gz -C websocketpp/ --strip 1"
+}
 
 configure.env-append    SPHINX_BUILD=${prefix}/bin/sphinx-build-2.7
 configure.cmd           ./waf configure
