@@ -13,6 +13,7 @@ homepage            https://github.com/named-data/ndn-tlv-ping
 version             0.1.1
 license             GPL3+
 epoch               1
+revision            1
 
 categories          net
 platforms           darwin
