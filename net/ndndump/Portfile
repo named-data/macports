@@ -12,7 +12,7 @@ name                ndndump
 homepage            https://github.com/named-data/ndndump
 version             0.0.0
 license             GPL3+
-revision            1
+revision            2
 
 categories          net
 platforms           darwin
