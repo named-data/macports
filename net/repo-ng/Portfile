@@ -4,14 +4,14 @@
 PortSystem          1.0
 PortGroup           github 1.0
 
-github.setup        named-data repo-ng b7e8a817c042e7fccf496d033194251bff9e58d5
-checksums           rmd160  6cc40c43efed76a2f5917272c92e1fd530be9c2a \
-                    sha256  2e54b5bb3456d79391e399460aa7f21ff502be084a045c5bab1e13acf257f37e
+github.setup        named-data repo-ng d02b72e529726fd2539af7a7069f2c9de27e24a4
+checksums           rmd160  6f76f4fccc59a104acbb59e2b586a090aebc78b6 \
+                    sha256  726471805cca05bbb7986bc793bdf4167f5b77f395639e8a67c40c35cfbcd666
 
 name                repo-ng
 homepage            https://github.com/named-data/repo-ng
 license             GPL-3+
-version             0.0.3
+version             0.0.4
 revision            1
 
 categories          net
