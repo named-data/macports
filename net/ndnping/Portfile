@@ -4,16 +4,15 @@
 PortSystem          1.0
 PortGroup           github 1.0
 
-github.setup        named-data ndn-tlv-ping 2e567f902b58e0ad260ea6b8d6ae66b050291a2f
-checksums           rmd160  520112b0470139626c91c660a0e6f3871a4ec20b \
-                    sha256  75d8a978960eb4857cff34d2d8ef73f3ec4689642746a1992803e73e68f48771
+github.setup        named-data ndn-tlv-ping d957b493b6d20416e7897f97a96c310e4cde2225
+checksums           rmd160  5924a097b947215fe9c1874cdd93838a8bbf83d0 \
+                    sha256  1f20f67021a4d87715fc533bc5bbe750813a25714848d5e021eb8ab4026546e7
 
 name                ndnping
 homepage            https://github.com/named-data/ndn-tlv-ping
-version             0.1.1
+version             0.1.2
 license             GPL3+
 epoch               1
-revision            2
 
 categories          net
 platforms           darwin
