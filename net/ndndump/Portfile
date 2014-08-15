@@ -4,15 +4,14 @@
 PortSystem          1.0
 PortGroup           github 1.0
 
-github.setup        named-data ndndump 22f77ef777d7201b3677b04e6b1e0e85c45f0238
-checksums           rmd160  cee800102434375b1a8e8b3eab1ec8b734e6e4d7 \
-                    sha256  b533164a935a936f52feaa84b01d163647159699f9f30b62fa91878682691dbd
+github.setup        named-data ndndump 98fe64e65cc68176d173054bd50d6e8ca860ae8a
+checksums           rmd160  61c51a974169d520183f78978956a005d511a9be \
+                    sha256  9b9cd98598e25aa35bd350944b130ad4a580bde6ae4ef99fb0a216c2a4f883ae
 
 name                ndndump
 homepage            https://github.com/named-data/ndndump
-version             0.0.0
+version             0.5
 license             GPL3+
-revision            2
 
 categories          net
 platforms           darwin
