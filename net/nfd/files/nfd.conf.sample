@@ -72,14 +72,17 @@ face_system
     mcast_group 224.0.23.170 ; UDP multicast group (IPv4 only)
   }
 
-  ; The ether section contains settings of Ethernet faces and channels.
-  ether
-  {
-    ; Ethernet multicast settings
-    ; NFD creates one Ethernet multicast face per NIC
-    mcast yes ; set to 'no' to disable Ethernet multicast, default 'yes'
-    mcast_group 01:00:5E:00:17:AA ; Ethernet multicast group
-  }
+  ; Note:
+  ; Ethernet face support is currently broken in OSX with boost 1.56
+  ;
+  ; ; The ether section contains settings of Ethernet faces and channels.
+  ; ether
+  ; {
+  ;   ; Ethernet multicast settings
+  ;   ; NFD creates one Ethernet multicast face per NIC
+  ;   mcast yes ; set to 'no' to disable Ethernet multicast, default 'yes'
+  ;   mcast_group 01:00:5E:00:17:AA ; Ethernet multicast group
+  ; }
 }
 
 authorizations
