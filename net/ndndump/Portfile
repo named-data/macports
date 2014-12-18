@@ -4,13 +4,13 @@
 PortSystem          1.0
 PortGroup           github 1.0
 
-github.setup        named-data ndndump v0.5.1
-checksums           rmd160  3af98116a96976fa674d8cdc9b7773fd7041a770 \
-                    sha256  8b1c90a913f472d7849a1ec56eb2a56eb76671b860d7c2d66c3fab52d467b77f
+github.setup        named-data ndndump 0ce60362a285f42cf2ecbeea8cff0c7919d28d72
+checksums           rmd160  85958ac36faa660b3735b76d0d05e5ebc2e30a9e \
+                    sha256  6d13147dcdfb36f0c281b12a99a6df9e56088ac1034e1bbc3b507be6e82061e4
 
 name                ndndump
 homepage            https://github.com/named-data/ndndump
-version             0.5.1
+version             0.5.2
 license             GPL3+
 revision            1
 
@@ -27,6 +27,7 @@ depends_build-append    port:pkgconfig
 
 use_configure       yes
 
+configure.cxxflags-append -std=c++11
 configure.cmd       ./waf configure
 
 build.cmd           ./waf
