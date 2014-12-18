@@ -4,13 +4,13 @@
 PortSystem          1.0
 PortGroup           github 1.0
 
-github.setup        named-data ndn-tlv-ping cf4d018f0fa6b6c35af7c5c40406582b2d24e789
-checksums           rmd160  3bd6f7adeae07c79a453cc4496fde0be1164192d \
-                    sha256  394e19b1845639423dea94bbddb279e96bcd92e1e6ff5c6a2e5f860ec8172a4d
+github.setup        named-data ndn-tlv-ping 1283684bacb2352de38c8f0ad21a069875583d91
+checksums           rmd160  3e9d28d2a656aafd9591dbcb5332e7934536ac61 \
+                    sha256  d71e4118a5df64c73c758ec2776376d51bb33abf2da688600b2a596bcd018002
 
 name                ndnping
 homepage            https://github.com/named-data/ndn-tlv-ping
-version             0.1.3
+version             0.1.4
 license             GPL3+
 epoch               1
 revision            1
@@ -29,6 +29,7 @@ depends_build-append    port:pkgconfig
 
 use_configure       yes
 
+configure.cxxflags-append -std=c++11
 configure.cmd       ./waf configure
 
 build.cmd           ./waf
