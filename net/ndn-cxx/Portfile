@@ -4,14 +4,14 @@
 PortSystem          1.0
 PortGroup           github 1.0
 
-github.setup        named-data ndn-cxx 9ad2d7222c3bf7be7f5d7d9fcf806716d9edb5ca
-checksums           rmd160  b2ca6a443d73756e9b8cedd2ec2aa22ec62b882a \
-                    sha256  3551f821d1ec77ea7d604c29794e417b0bfa9b11eddefd9bb7806c2a5c1f0622
+github.setup        named-data ndn-cxx a8659ff5709a27404e69e85e0fd27823c4abc76d
+checksums           rmd160  9fb040b202334e3bb0d42449b2cd3107ef7da05c \
+                    sha256  10d8f515dcad6d83b0cae1bbf5ae4015945b24d82fcb7b5aa9453277738cdf2b
 
 name                ndn-cxx
 homepage            http://named-data.net/doc/ndn-cxx/
 license             GPL-3+
-version             0.2.0-0
+version             0.3.0-rc0.0
 epoch               2
 
 categories          net
@@ -34,6 +34,7 @@ depends_build-append    port:pkgconfig \
 use_configure           yes
 
 configure.env-append    SPHINX_BUILD=${prefix}/bin/sphinx-build-2.7
+configure.cxxflags-append -std=c++11
 configure.cmd           ./waf configure
 
 build.cmd           ./waf
