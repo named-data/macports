@@ -36,13 +36,31 @@ log
   ; Forwarder INFO
 }
 
+; The tables section configures the CS, PIT, FIB, Strategy Choice, and Measurements
+tables
+{
+
+  ; ContentStore size limit in number of packets
+  ; default is 65536, about 500MB with 8KB packet size
+  cs_max_packets 65536
+
+  ; Set the forwarding strategy for the specified prefixes:
+  ;   <prefix> <strategy>
+  strategy_choice
+  {
+    /               /localhost/nfd/strategy/best-route
+    /localhost      /localhost/nfd/strategy/broadcast
+    /localhost/nfd  /localhost/nfd/strategy/best-route
+    /ndn/broadcast  /localhost/nfd/strategy/broadcast
+  }
+}
+
 ; The face_system section defines what faces and channels are created.
 face_system
 {
   ; The unix section contains settings of UNIX stream faces and channels.
   unix
   {
-    listen yes ; set to 'no' to disable UNIX stream listener, default 'yes'
     path /var/run/nfd.sock ; UNIX stream listener path
   }
 
@@ -195,4 +213,15 @@ rib
   ;   ;   file-name keys/ndn-testbed.ndncert
   ;   ; }
   ; }
+
+  remote_register
+  {
+    cost 15 ; forwarding cost of prefix registered on remote router
+    timeout 10000 ; timeout (in milliseconds) of remote prefix registration command
+    retry 0 ; maximum number of retries for each remote prefix registration command
+
+    refresh_interval 300 ; interval (in seconds) before refreshing the registration
+    ; This setting should be less than face_system.udp.idle_time,
+    ; so that the face is kept alive on the remote router.
+  }
 }
