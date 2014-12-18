@@ -4,15 +4,14 @@
 PortSystem          1.0
 PortGroup           github 1.0
 
-github.setup        named-data repo-ng 5822e346db5342215a880b07912e0031526ee9b6
-checksums           rmd160  bcc5eccf05eebedac58734e130a3331ac5254d00 \
-                    sha256  b583b5ceba4a267aa675053e7e76ecf9ea48c7257edc18fd45963aa3e8d61d41
+github.setup        named-data repo-ng 595b2bd4020e8c43baf54396eb2c08e1e26fe1ce
+checksums           rmd160  fb420bb8c8ac6fc5d9f99f337dcf40a9eca68919 \
+                    sha256  e33a14431d7a342caa0b9601ee10e44144faf393ed4c5c3e48d21dcb22b57c09
 
 name                repo-ng
 homepage            https://github.com/named-data/repo-ng
 license             GPL-3+
-version             0.0.5
-revision            2
+version             0.0.6
 
 categories          net
 platforms           darwin
@@ -31,6 +30,7 @@ depends_build-append    port:pkgconfig
 
 use_configure       yes
 
+configure.cxxflags-append -std=c++11
 configure.cmd       ./waf configure
 
 build.cmd           ./waf
