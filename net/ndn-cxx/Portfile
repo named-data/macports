@@ -4,15 +4,15 @@
 PortSystem          1.0
 PortGroup           github 1.0
 
-github.setup        named-data ndn-cxx e3d62665471375b2b05a87898fc650aba6704efc
-checksums           rmd160  4f902a2c03eefd513b01371267908ef78287f7a5 \
-                    sha256  fb78d980f19f64aecc85c8b2d78d5ecd95e2e5f5accee2630b063f8dd675bfee
+github.setup        named-data ndn-cxx ndn-cxx-0.3.0
+checksums           rmd160  0d6cc1ff78d4c65eb3f6125690959e561e287973 \
+                    sha256  5d1d7bfe3113aa3d2de587704a9a6e25537051d6717c7c410d9d7f9cb14d5a22
 
 name                ndn-cxx
 homepage            http://named-data.net/doc/ndn-cxx/
 license             GPL-3+
-version             0.3.0-rc0.1
-epoch               2
+version             0.3.0
+epoch               3
 
 categories          net
 platforms           darwin
@@ -24,7 +24,6 @@ long_description    ndn-cxx is a C++ library, implementing Named Data Networking
                     that can be used to implement various NDN applications
 
 depends_lib-append  port:boost \
-                    port:openssl \
                     port:libcryptopp \
                     port:sqlite3
 
