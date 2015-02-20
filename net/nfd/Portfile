@@ -13,6 +13,7 @@ homepage            http://named-data.net/doc/NFD/
 license             GPL3+
 version             0.3.0
 epoch               3
+revision            1
 
 categories          net
 platforms           darwin
@@ -47,6 +48,7 @@ pre-configure {
 }
 
 configure.env-append    SPHINX_BUILD=${prefix}/bin/sphinx-build-2.7
+configure.env-append PKG_CONFIG_PATH=${prefix}/lib/pkgconfig
 configure.cxxflags-append -std=c++11
 configure.cmd           ./waf configure
 

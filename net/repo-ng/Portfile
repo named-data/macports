@@ -12,6 +12,7 @@ name                repo-ng
 homepage            https://github.com/named-data/repo-ng
 license             GPL-3+
 version             0.0.6
+revision            1
 
 categories          net
 platforms           darwin
@@ -31,6 +32,7 @@ depends_build-append    port:pkgconfig
 use_configure       yes
 
 configure.cxxflags-append -std=c++11
+configure.env-append PKG_CONFIG_PATH=${prefix}/lib/pkgconfig
 configure.cmd       ./waf configure
 
 build.cmd           ./waf

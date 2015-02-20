@@ -13,7 +13,7 @@ homepage            https://github.com/named-data/ndn-tlv-ping
 version             0.1.4
 license             GPL3+
 epoch               1
-revision            1
+revision            2
 
 categories          net
 platforms           darwin
@@ -30,6 +30,7 @@ depends_build-append    port:pkgconfig
 use_configure       yes
 
 configure.cxxflags-append -std=c++11
+configure.env-append PKG_CONFIG_PATH=${prefix}/lib/pkgconfig
 configure.cmd       ./waf configure
 
 build.cmd           ./waf
