@@ -4,14 +4,14 @@
 PortSystem          1.0
 PortGroup           github 1.0
 
-github.setup        named-data ndn-cxx ndn-cxx-0.3.0
-checksums           rmd160  0d6cc1ff78d4c65eb3f6125690959e561e287973 \
-                    sha256  5d1d7bfe3113aa3d2de587704a9a6e25537051d6717c7c410d9d7f9cb14d5a22
+github.setup        named-data ndn-cxx ndn-cxx-0.3.1
+checksums           rmd160  11a0901a0b16edc885d235b4582810ef958800d9 \
+                    sha256  9bc23c2a19de80bf4651614ab5e95bafe5b539dcaac87fa4975f05ccda02da2a
 
 name                ndn-cxx
 homepage            http://named-data.net/doc/ndn-cxx/
 license             GPL-3+
-version             0.3.0
+version             0.3.1
 epoch               3
 
 categories          net
