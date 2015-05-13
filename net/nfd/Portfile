@@ -4,14 +4,14 @@
 PortSystem          1.0
 PortGroup           github 1.0
 
-github.setup        named-data NFD NFD-0.3.1
-checksums           rmd160  5971a2be0cc4f734947a011a31259fea4ddbe5df \
-                    sha256  a45a1196ac1929cc71b10ff279d56aebb1b07f7505787999af5b2dd36c321620
+github.setup        named-data NFD NFD-0.3.2
+checksums           rmd160  3e6890104286046251f08a818493228cdef851a2 \
+                    sha256  5633a84f97ad293dedd1ded3a87554826c8f7be206a5de03860da3c66768c487
 
 name                nfd
 homepage            http://named-data.net/doc/NFD/
 license             GPL3+
-version             0.3.1
+version             0.3.2
 epoch               3
 
 categories          net
@@ -42,7 +42,7 @@ use_configure           yes
 
 pre-configure {
     system "cd ${worksrcpath} && \
-            curl -L https://github.com/zaphoyd/websocketpp/tarball/4309749dd98937b8a7be5dc0bfe679ba201c5512 > websocket.tar.gz && \
+            curl -L https://github.com/zaphoyd/websocketpp/tarball/ac5d7ea5af9734de965688b54a7860259887b537 > websocket.tar.gz && \
             tar zxf websocket.tar.gz -C websocketpp/ --strip 1"
 }
 
@@ -69,13 +69,9 @@ post-destroot {
     xinstall -m 755 -d ${destroot}${prefix}/etc/LaunchDaemons/net.named-data.nfd/
     xinstall -m 755 ${filespath}/net.named-data.nfd.plist \
         ${destroot}${prefix}/etc/LaunchDaemons/net.named-data.nfd/
-    xinstall -m 755 ${filespath}/net.named-data.nrd.plist \
-        ${destroot}${prefix}/etc/LaunchDaemons/net.named-data.nfd/
 
     reinplace "s|/usr/local|${prefix}|g" \
         ${destroot}${prefix}/etc/LaunchDaemons/net.named-data.nfd/net.named-data.nfd.plist
-    reinplace "s|/usr/local|${prefix}|g" \
-        ${destroot}${prefix}/etc/LaunchDaemons/net.named-data.nfd/net.named-data.nrd.plist
 
     # Install replacement for nfd-start/stop scripts
     xinstall -m 755 ${filespath}/nfd-start "${destroot}${prefix}/bin/"
@@ -90,8 +86,6 @@ post-activate {
 
     system "cd /Library/LaunchDaemons && sudo ln -sf \
             ${prefix}/etc/LaunchDaemons/net.named-data.nfd/net.named-data.nfd.plist"
-    system "cd /Library/LaunchDaemons && sudo ln -sf \
-            ${prefix}/etc/LaunchDaemons/net.named-data.nfd/net.named-data.nrd.plist"
 
     if {![file exists ${prefix}/etc/ndn/nfd.conf]} {
 
@@ -104,19 +98,11 @@ post-activate {
         system "HOME=${prefix}/var/lib/ndn/nfd ndnsec-keygen /localhost/daemons/nfd | \
           HOME=${prefix}/var/lib/ndn/nfd ndnsec-install-cert -"
 
-        # Generate self-signed NDN certificate for nrd (owned by ndn)
-        xinstall -m 755 -d -o ${ndn_user} -g ${ndn_group} ${prefix}/var/lib/ndn/nrd/.ndn
-        system "sudo -u ${ndn_user} -g ${ndn_group} sh -c 'echo tpm=file \
-          > ${prefix}/var/lib/ndn/nrd/.ndn/client.conf'"
-        system "sudo -u ${ndn_user} -g ${ndn_group} HOME=${prefix}/var/lib/ndn/nrd \
-          ndnsec-keygen /localhost/daemons/nrd | \
-          sudo -u ${ndn_user} -g ndn HOME=${prefix}/var/lib/ndn/nrd ndnsec-install-cert -"
-
         # Dump RIB Management daemon's certificate
         xinstall -m 755 -d ${prefix}/etc/ndn/certs
-        system "sudo sh -c 'sudo -u ${ndn_user} -g ${ndn_group} HOME=${prefix}/var/lib/ndn/nrd \
-          ndnsec-dump-certificate -i /localhost/daemons/nrd \
-          > ${prefix}/etc/ndn/certs/localhost_daemons_nrd.ndncert'"
+        system "sudo sh -c 'sudo -u ${ndn_user} -g ${ndn_group} HOME=${prefix}/var/lib/ndn/nfd \
+          ndnsec-dump-certificate -i /localhost/daemons/nfd \
+          > ${prefix}/etc/ndn/certs/localhost_daemons_nfd.ndncert'"
 
     }
 }
@@ -125,7 +111,6 @@ pre-deactivate {
     system "${prefix}/bin/nfd-stop"
 
     system "rm ${prefix}/etc/LaunchDaemons/net.named-data.nfd/net.named-data.nfd.plist"
-    system "rm ${prefix}/etc/LaunchDaemons/net.named-data.nfd/net.named-data.nrd.plist"
 }
 
 notes "

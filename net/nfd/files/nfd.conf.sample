@@ -26,7 +26,6 @@ log
   ;
   ; Run:
   ;   nfd --modules
-  ;   nrd --modules
   ;
   ; Or look for NFD_LOG_INIT(<module name>) statements in .cpp files
   ;
@@ -116,7 +115,7 @@ authorizations
 {
   authorize
   {
-    certfile certs/localhost_daemons_nrd.ndncert
+    certfile certs/localhost_daemons_nfd.ndncert
     privileges
     {
         faces
