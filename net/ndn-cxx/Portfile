@@ -4,14 +4,14 @@
 PortSystem          1.0
 PortGroup           github 1.0
 
-github.setup        named-data ndn-cxx ndn-cxx-0.3.2
-checksums           rmd160  265b7a05b85d835ebc2169d5729381ad4f8273c2 \
-                    sha256  3321b2c3b91d04c27409c59ca6fe9117969b6e96599d5bcc3b34104afef67b8c
+github.setup        named-data ndn-cxx ndn-cxx-0.3.3
+checksums           rmd160  69db357f0fb0b9ac9c82cdf14e5d4ff1a179969a \
+                    sha256  274fe7603fe92300ac0c3c0f60d3c95e81d79d0b114548a68f3effb998d2b358
 
 name                ndn-cxx
 homepage            http://named-data.net/doc/ndn-cxx/
 license             GPL-3+
-version             0.3.2
+version             0.3.3
 epoch               3
 
 categories          net
@@ -33,7 +33,7 @@ depends_build-append    port:pkgconfig \
 use_configure           yes
 
 configure.env-append    SPHINX_BUILD=${prefix}/bin/sphinx-build-2.7
-configure.cmd           ./waf configure
+configure.cmd           ./waf configure --disable-static --enable-shared
 
 build.cmd           ./waf
 build.target        build
