@@ -4,14 +4,14 @@
 PortSystem          1.0
 PortGroup           github 1.0
 
-github.setup        named-data NFD NFD-0.3.2
-checksums           rmd160  3e6890104286046251f08a818493228cdef851a2 \
-                    sha256  5633a84f97ad293dedd1ded3a87554826c8f7be206a5de03860da3c66768c487
+github.setup        named-data NFD NFD-0.3.3
+checksums           rmd160  66621fa72cb64787435e24e4b4dbb93728621910 \
+                    sha256  0de0f2e08aa4c202f25e918c6186be55da8541b7ec2a65cdf5143c52c9747136
 
 name                nfd
 homepage            http://named-data.net/doc/NFD/
 license             GPL3+
-version             0.3.2
+version             0.3.3
 epoch               3
 
 categories          net
