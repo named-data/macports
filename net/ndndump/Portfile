@@ -2,37 +2,14 @@
 # $Id$
 
 PortSystem          1.0
-PortGroup           github 1.0
-
-github.setup        named-data ndndump 0ce60362a285f42cf2ecbeea8cff0c7919d28d72
-checksums           rmd160  85958ac36faa660b3735b76d0d05e5ebc2e30a9e \
-                    sha256  6d13147dcdfb36f0c281b12a99a6df9e56088ac1034e1bbc3b507be6e82061e4
+PortGroup           obsolete 1.0
 
 name                ndndump
-homepage            https://github.com/named-data/ndndump
-version             0.5.2
+version             0.6-deprecated
 license             GPL3+
 revision            2
 
+replaced_by         ndn-tools
+
 categories          net
 platforms           darwin
-maintainers         ucla.edu:alexander.afanasyev
-
-description         Packet capture and analysis tool for NDN
-
-depends_lib-append  port:ndn-cxx \
-                    port:libpcap
-
-depends_build-append    port:pkgconfig
-
-use_configure       yes
-
-configure.cxxflags-append -std=c++11
-configure.cmd       ./waf configure
-
-build.cmd           ./waf
-build.target        build
-
-destroot.cmd        ./waf
-destroot.target     install
-destroot.destdir    --destdir=${destroot}

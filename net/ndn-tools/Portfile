@@ -1,0 +1,38 @@
+# -*- coding: utf-8; mode: tcl; tab-width: 4; indent-tabs-mode: nil; c-basic-offset: 4 -*- vim:fenc=utf-8:ft=tcl:et:sw=4:ts=4:sts=4
+# $Id$
+
+PortSystem          1.0
+PortGroup           github 1.0
+
+github.setup        named-data ndn-tools 6eff4e56534b3998515b35ca25b3db39bb7aaa3e
+checksums           rmd160  b4c3d45e0662ab9ad4a86a019c8d18890a409716 \
+                    sha256  518de79810fc1b6f651027ef6df22cd48e320b91e516e2ca207e99cae3da3d90
+
+name                ndn-tools
+homepage            https://github.com/named-data/ndndump
+version             0.0.0-g6eff4e5
+license             GPL3+
+
+categories          net
+platforms           darwin
+maintainers         ucla.edu:alexander.afanasyev
+
+description         ndn-tools is a collection of essential tools for Named Data Networking. \
+                    These tools are recommended to be installed on all NDN nodes.
+
+depends_lib-append  port:ndn-cxx \
+                    port:libpcap
+
+depends_build-append    port:pkgconfig
+
+use_configure       yes
+
+configure.cxxflags-append -std=c++11
+configure.cmd       ./waf configure
+
+build.cmd           ./waf
+build.target        build
+
+destroot.cmd        ./waf
+destroot.target     install
+destroot.destdir    --destdir=${destroot}

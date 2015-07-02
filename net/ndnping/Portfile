@@ -2,39 +2,14 @@
 # $Id$
 
 PortSystem          1.0
-PortGroup           github 1.0
-
-github.setup        named-data ndn-tlv-ping d3675f528af468d59b2c505057acd21b56210c5c
-checksums           rmd160  5a3d9c33f7455b2f03c45a7cfdf1e341b5389bab \
-                    sha256  6e4be27a40da0270c814dc706b2bbe100630fa95cabc901f7fe7e1d8e138e50a
+PortGroup           obsolete 1.0
 
 name                ndnping
-homepage            https://github.com/named-data/ndn-tlv-ping
-version             0.1.5
+version             0.2-deprecated
 license             GPL3+
 epoch               1
 
+replaced_by         ndn-tools
+
 categories          net
 platforms           darwin
-maintainers         ucla.edu:alexander.afanasyev
-
-description         NDN Ping utility (ndn-tlv-ping)
-
-long_description    NDN Ping utility (client and server)
-
-depends_lib-append  port:ndn-cxx
-
-depends_build-append    port:pkgconfig
-
-use_configure       yes
-
-configure.cxxflags-append -std=c++11
-configure.env-append PKG_CONFIG_PATH=${prefix}/lib/pkgconfig
-configure.cmd       ./waf configure
-
-build.cmd           ./waf
-build.target        build
-
-destroot.cmd        ./waf
-destroot.target     install
-destroot.destdir    --destdir=${destroot}
