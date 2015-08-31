@@ -4,13 +4,13 @@
 PortSystem          1.0
 PortGroup           github 1.0
 
-github.setup        named-data ndn-tools 6eff4e56534b3998515b35ca25b3db39bb7aaa3e
-checksums           rmd160  b4c3d45e0662ab9ad4a86a019c8d18890a409716 \
-                    sha256  518de79810fc1b6f651027ef6df22cd48e320b91e516e2ca207e99cae3da3d90
+github.setup        named-data ndn-tools ndn-tools-0.2
+checksums           rmd160  ec74372397d3e5a7b0ecf230211f9041c1f32198 \
+                    sha256  12447230508ec0bb636493f517fc12882814cd52cd41ab672ffecd38f2be66aa
 
 name                ndn-tools
 homepage            https://github.com/named-data/ndndump
-version             0.0.0-g6eff4e5
+version             0.2
 license             GPL3+
 
 categories          net
