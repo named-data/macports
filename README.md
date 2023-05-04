@@ -1,3 +1,10 @@
+Abandoned
+=======================
+
+This repository is no longer maintained.  Please see the [ndn-cxx](https://docs.named-data.net/ndn-cxx/current/INSTALL.html) documentation for instructions on how to install NDN software.
+
+-----------------------
+
 Using NDN MacPorts repo
 =======================
 
@@ -15,7 +22,7 @@ The following command will install ccnx using MacPorts
 
         sudo port install ccnx
 
-Very last piece is to run "`sudo port load ccnx`", which will start ccnx, make it start on startup, and makes auto-configuration scripts to be rerun every time there is a change in connectivity. 
+Very last piece is to run "`sudo port load ccnx`", which will start ccnx, make it start on startup, and makes auto-configuration scripts to be rerun every time there is a change in connectivity.
 
 Public key management
 ---------------------
@@ -48,7 +55,7 @@ Other recommended tools
 
 There are a couple of other NDN tools that are available in MacPorts and are recommended to be installed:
 
-#### ccnping 
+#### ccnping
 
         sudo port install ccnping
 
